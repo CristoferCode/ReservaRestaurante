@@ -1,4 +1,4 @@
-# **La Canga 2**
+# **La Canga 2** 
 
 ## Pasos para iniciar el proyecto
 
