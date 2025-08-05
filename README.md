@@ -1,6 +1,6 @@
-# **La Canga 2** 
+# [**La Canga 2**](https://restaurantreservation-opal.vercel.app/)  
 
-## Pasos para iniciar el proyecto
+## Pasos para iniciar el proyecto 
 
 1. Clona el repositorio:
 
@@ -162,6 +162,7 @@
 
 
 * `Credenciales de acceso`:
+  - **link**: https://restaurantreservation-opal.vercel.app/ 
   ```javascript 
   [
     {
