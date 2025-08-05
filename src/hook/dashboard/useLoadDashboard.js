@@ -9,9 +9,9 @@ export const useLoadDashboard = () => {
    const dispatch = useDispatch();
 
    useEffect(() => {
-      if (state.isRequest) return;
+      // if (state.isRequest) return;
       dispatch(dashboardDataThunk());
-   }, [state.isRequest]);
+   }, []);
 
    const metrics = useMemo(() => {
       return [

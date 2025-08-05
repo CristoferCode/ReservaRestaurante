@@ -27,8 +27,8 @@ export class FirebaseUserService {
             uid: res.docs[0].id,
             id: res.docs[0].id,
             ...user,
-            createdAt: user.createdAt.toDate().toISOString(),
-            updatedAt: user.updatedAt.toDate().toISOString(),
+            createdAt: user.createdAt?.toDate()?.toISOString(),
+            updatedAt: user.updatedAt?.toDate()?.toISOString(),
          }
 
       } catch (error) {
