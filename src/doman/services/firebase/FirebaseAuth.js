@@ -7,7 +7,7 @@ import {
    signInWithPopup,
    updateProfile
 } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore/lite';
+import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore/lite';
 
 import { FirebaseAuth, FirebaseDB } from './config';
 
@@ -44,7 +44,9 @@ export class FirebaseAuthService {
             photoURL: photoURL,
             phone: '',
             address: '',
-            role: 'user'
+            role: 'user',
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
          }
 
          if (!userDoc.exists()) {
@@ -54,7 +56,11 @@ export class FirebaseAuthService {
          return {
             ok: true,
             token,
-            user: data
+            user: {
+               ...data,
+               createdAt: new Date().toISOString(),
+               updatedAt: new Date().toISOString()
+            }
          };
       } catch (error) {
          return {
@@ -77,14 +83,20 @@ export class FirebaseAuthService {
             photoURL: photoURL,
             phone: phone ?? '',
             address: address ?? '',
-            role: 'user'
+            role: 'user',
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
          };
 
          await setDoc(doc(FirebaseDB, 'users', uid), data);
 
          return {
             ok: true,
-            user: data
+            user: {
+               ...data,
+               createdAt: new Date().toISOString(),
+               updatedAt: new Date().toISOString()
+            }
          };
 
       } catch (error) {

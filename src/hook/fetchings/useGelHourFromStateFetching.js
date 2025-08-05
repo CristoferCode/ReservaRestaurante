@@ -13,6 +13,7 @@ export const useGelHourFromStateFetching = (typeState = typeStatusTable.AVAILABL
    const loadHours = async ({
       idRestaurant,
       dateStr,
+      diners
    }) => {
 
       if (!idRestaurant || !dateStr) return;
@@ -23,7 +24,7 @@ export const useGelHourFromStateFetching = (typeState = typeStatusTable.AVAILABL
          errorMessage: null,
       }));
 
-      const { availableHours, ok, messageError } = await serviceProvider.getAvailableHours({ dateStr, idRestaurant });
+      const { availableHours, ok, messageError } = await serviceProvider.getAvailableHours({ dateStr, idRestaurant, diners });
 
       if (!ok) {
          setState(prev => ({

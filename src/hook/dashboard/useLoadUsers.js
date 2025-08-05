@@ -1,4 +1,4 @@
-import { getAllUsersThunk, getByIdUserReservationThunk, setSelectedUser } from '@/doman/store/dashboard';
+import { getAllUsersThunk, getByIdUserReservationThunk, setSelectedUserAction } from '@/doman/store/dashboard';
 import { DateParser } from '@/ultils';
 import { Users } from 'lucide-react';
 import { useEffect, useMemo } from 'react';
@@ -25,6 +25,18 @@ export const useLoadUsers = () => {
       dispatch(getByIdUserReservationThunk(idUser));
    }
 
+   const calculateRate = (user) => {
+      const rate = ((user.metrics?.released || 0) / (user.metrics?.total || 0) * 100).toFixed(1)
+
+      let rateSuccess = ((user.metrics?.released / user.totalReservas) * 100).toFixed(1)
+      rateSuccess = isNaN(rateSuccess) ? 0 : rateSuccess;
+
+      return {
+         rate: isNaN(rate) ? '0.0' : rate,
+         rateSuccess
+      }
+   };
+
    const metrics = useMemo(() => {
       return [
          {
@@ -42,26 +54,46 @@ export const useLoadUsers = () => {
 
    const users = useMemo(() => {
       return state.users.map((user) => {
-         const rate = ((user.metrics?.released || 0) / (user.metrics?.total || 0) * 100).toFixed(1)
+         // const rate = ((user.metrics?.released || 0) / (user.metrics?.total || 0) * 100).toFixed(1)
+
+         // let rateSuccess = ((user.metrics?.released / user.totalReservas) * 100).toFixed(1)
+         // rateSuccess = isNaN(rateSuccess) ? 0 : rateSuccess;
+         const { rate, rateSuccess } = calculateRate(user);
          return {
             ...user,
             updatedAt: DateParser.toString(new Date(user.updatedAt)),
-            rate: isNaN(rate) ? '0.0' : rate
+            rate: rate,
+            rateSuccess
          };
       })
    }, [state.users])
+
+   const selectedUser = useMemo(() => {
+      if (!state.selectedUser) return {};
+      const { rate, rateSuccess } = calculateRate(state.selectedUser);
+      return {
+         ...state.selectedUser,
+         rate: rate,
+         rateSuccess
+      }
+   }, [state.selectedUser]);
+
+   const setSelectedUser = (user) => {
+      dispatch(setSelectedUserAction(user));
+   }
 
    return {
       users: users,
       metrics: metrics,
       reservations: state.reservations,
-      selectedUser: state.selectedUser,
+      selectedUser: selectedUser,
       loadings: {
          users: state.loadings.users,
          reservations: state.loadings.reservations
       },
 
       // FUNCTIONS
-      getByIdUserReservations
+      getByIdUserReservations,
+      setSelectedUser,
    }
 }

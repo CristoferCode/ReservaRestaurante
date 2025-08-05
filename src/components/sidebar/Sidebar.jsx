@@ -206,7 +206,7 @@ export function Sidebar() {
                                  onClick={() => handleSubmenuToggle(index)}
                                  className={cn(
                                     'w-full flex items-center transition-all duration-200',
-                                    'text-left',
+                                    'text-left overflow-hidden',
                                     isItemActive && 'bg-accent',
                                     !isItemActive && 'hover:bg-transparent',
                                  )}
@@ -292,6 +292,7 @@ export function Sidebar() {
                })}
             </nav>
 
+<<<<<<< HEAD
             {/* Footer */}
             {/* {showLabels && (
                <div
@@ -304,6 +305,21 @@ export function Sidebar() {
                   <div className='text-xs opacity-70 text-center'>© 2024 Tu Empresa</div>
                </div>
             )} */}
+=======
+            <footer className='pb-2'>
+               <Link
+                  className='flex items-center gap-3 px-3 py-2 mt-3 font-medium transition-all hover:-translate-x-1'
+                  onClick={handleLogout}
+               >
+                  {
+                     !showLabels
+                        ? <LogOut className='rotate-180 m-auto' />
+                        : <LogOut className='rotate-180 ml-auto' />
+                  }
+               </Link>
+            </footer>
+
+>>>>>>> 175bc2c (Característica: Mejora de la gestión de reservas y las funciones de detalles de usuario)
          </aside>
 
          {/* Main content spacer for desktop */}

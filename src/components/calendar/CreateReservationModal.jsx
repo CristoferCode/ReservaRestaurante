@@ -20,8 +20,8 @@ export const CreateReservationModal = ({
       formState,
       resetForm,
    }) => {
-      ReservationToast({
-         promise: reserveTable(formState),
+      ReservationToast(
+         reserveTable(formState), {
          onSuccess: () => {
             window.requestAnimationFrame(() => resetForm());
          },

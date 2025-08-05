@@ -166,7 +166,8 @@ export const FromReservation = ({
             if (!idRestaurant) return;
             loadHours({
                idRestaurant: idRestaurant,
-               dateStr: DateParser.toString(date)
+               dateStr: DateParser.toString(date),
+               diners: diners
             });
 
             setSelectedTables([])
@@ -179,7 +180,8 @@ export const FromReservation = ({
 
             loadHours({
                idRestaurant: idRestaurant,
-               dateStr: DateParser.toString(value)
+               dateStr: DateParser.toString(value),
+               diners: diners
             });
 
             setSelectedTables([])
@@ -193,7 +195,8 @@ export const FromReservation = ({
             loadTables({
                idRestaurant: idRestaurant,
                dateStr: DateParser.toString(date),
-               hour: value
+               hour: value,
+               diners: diners
             });
 
             setSelectedTables([])
@@ -208,7 +211,7 @@ export const FromReservation = ({
                idRestaurant: idRestaurant,
                dateStr: DateParser.toString(date),
                hour: hour,
-               diners: value
+               diners: value,
             });
 
             setSelectedTables([])
@@ -245,7 +248,8 @@ export const FromReservation = ({
 
       loadHours({
          idRestaurant: initialValues?.idRestaurant,
-         dateStr: DateParser.toString(date)
+         dateStr: DateParser.toString(date),
+         diners: initialValues?.diners
       });
 
       loadTables({
@@ -444,8 +448,8 @@ export const FromReservation = ({
                   onValueChange={onValueChange}
                >
                   <SelectTrigger
-                     className='w-full'
                      variant='crystal'
+                     className='w-full truncate-text-nowarp'
                      isLoading={isLoadingRestaurants}
                      disabled={!isLoadRestaurants}
                      isError={!!restaurantValid}
@@ -457,6 +461,7 @@ export const FromReservation = ({
                   <SelectContent>
                      {restaurants.map((item) => (
                         <SelectItem
+                           className={'truncate-text-nowarp'}
                            key={item.id}
                            value={item.name}
                         >
@@ -536,7 +541,7 @@ export const FromReservation = ({
                options={tables}
                selected={selectedTables}
                onChange={setSelectedTables}
-               disabled={!isLoadTables}
+               disabled={isLoadingTables}
                isLoading={isLoadingTables}
                placeholder='Seleccione mesas'
                className='w-full'
@@ -554,6 +559,7 @@ export const FromReservation = ({
                            size={item.size || 'lg'}
                            type={item.type || 'button'}
                            variant={item.variant || 'default'}
+                           onClick={item.type !== 'submit' ? item.onClick : null}
                            disabled={item.disabled || item.disabledBySelected && selectedTables.length === 0}
                         >
                            {item.label}

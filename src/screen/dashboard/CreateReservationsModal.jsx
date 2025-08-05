@@ -15,7 +15,6 @@ export const CreateReservationsModal = ({
 
    const {
       reserveTable,
-      toggleLoading,
       isLoading: isLoadingReservation,
    } = useReservation()
 
@@ -24,13 +23,10 @@ export const CreateReservationsModal = ({
       formState,
       resetForm,
    }) => {
-      ReservationToast({
-         promise: reserveTable(formState),
+      ReservationToast(
+         reserveTable(formState), {
          onSuccess: () => {
             window.requestAnimationFrame(() => resetForm());
-         },
-         onFinally: () => {
-            toggleLoading(false);
          },
       });
    });

@@ -11,13 +11,22 @@ export class UserSettingService {
             throw new Error('No se proporciono el id de la reserva');
          }
 
+         const reservation = await getDoc(doc(FirebaseDB, 'reservations', id));
+
+         if (!reservation.exists()) {
+            throw new Error('No se encontro la reserva');
+         }
+
+         if (reservation.data()?.status !== typeStatusTable.PENDING) {
+            throw new Error('Solo se puede cancelar reservas pendientes');
+         }
+
          const reservationRef = doc(FirebaseDB, 'reservations', id);
+
          await updateDoc(reservationRef, {
             status: typeStatusTable.CANCELED,
             updatedAt: serverTimestamp()
          });
-
-         const reservation = await getDoc(doc(FirebaseDB, 'reservations', id));
 
          return {
             ok: true,
@@ -104,8 +113,8 @@ export class UserSettingService {
             user: {
                ...data,
                id: user.id,
-               createdAt: dataUser?.createdAt?.toDate()?.toISOString(),
-               updatedAt: new Date().toISOString()
+               createdAt: DateParser.toString(new Date(dataUser?.createdAt?.toDate()?.toISOString())),
+               updatedAt: DateParser.toString(new Date())
             }
          }
       } catch (error) {
@@ -143,12 +152,22 @@ export class UserSettingService {
 
          const reservationRef = doc(FirebaseDB, 'reservations', idReservation);
 
+         const reservation = await getDoc(reservationRef);
+
+         if (!reservation.exists()) {
+            throw new Error('No se encontro la reserva');
+         }
+
+         if (!reservation.data().status !== typeStatusTable.PENDING) {
+            throw new Error(`No se puede actualizar: estado ${reservation.data().status}`);
+         }
+
          const data = {
+            hour,
             idUser: idUser ?? null,
             idRestaurant,
             diners: diners ?? 1,
             reason: reason ?? 'Sin motivo',
-            hour,
             comment: comment ?? 'Reserva por el panel de administrador',
             tables: tables.map(t => ({ id: t.id, name: t.name })),
             dateStr: dateStr,
@@ -172,7 +191,7 @@ export class UserSettingService {
          console.error(error.message);
          return {
             ok: false,
-            errorMessage: 'Error al actualizar la reserva'
+            errorMessage: error.message || 'Error al actualizar la reserva'
          }
       }
    }

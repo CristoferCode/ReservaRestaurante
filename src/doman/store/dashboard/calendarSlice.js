@@ -17,12 +17,12 @@ export const calendarSlice = createSlice({
          state.messageError = null
       },
 
-      addReservationAction: (state, { payload }) => {
+      addReservationCalendar: (state, { payload }) => {
          if (!payload || !payload?.status) return;
          state.reservations.push(payload);
       },
 
-      updateReservationAction: (state, { payload }) => {
+      updateReservationCalendar: (state, { payload }) => {
          if (!payload || !payload?.id) return;
          state.reservations = state.reservations.map(r => {
             if (r.id === payload.id) {
@@ -32,7 +32,7 @@ export const calendarSlice = createSlice({
          });
       },
 
-      removeReservationAction: (state, { payload }) => {
+      removeReservationCalendar: (state, { payload }) => {
          if (!payload) return;
          state.reservations = state.reservations.filter(r => r.id !== payload);
       },
@@ -49,10 +49,10 @@ export const calendarSlice = createSlice({
 
 export const {
    setReservationsAction,
-   addReservationAction,
-   updateReservationAction,
-   removeReservationAction,
+   addReservationCalendar,
+   updateReservationCalendar,
    loadingActionCalendar,
-   messageErrorActionCalendar
+   messageErrorActionCalendar,
+   removeReservationCalendar,
 } = calendarSlice.actions;
 

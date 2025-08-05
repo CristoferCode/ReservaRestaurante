@@ -59,7 +59,7 @@ export const DialogEnterPhone = ({
 
    return (
       <Card2 className={cn(
-         'space-y-4'
+         'space-y-4',
       )}>
          <CardHeader className={'gap-3'}>
             <CardTitle className={'text-background text-center text-sm md:text-md'}>
