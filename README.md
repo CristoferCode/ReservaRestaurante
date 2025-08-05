@@ -159,3 +159,21 @@
 
   * Gestión de restaurantes.
   * Permite **agregar, editar o eliminar** restaurantes.
+
+
+* `Credenciales de acceso`:
+  ```javascript 
+  [
+    {
+      correo: "admin@gamil.com",
+      password: "admin123456",
+      rol: "admin",
+    },
+    {
+      correo: "user@gamil.com",
+      password: "user123456",
+      rol: "user",
+    }
+  ]
+  ```
+
