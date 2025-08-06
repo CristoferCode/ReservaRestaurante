@@ -55,16 +55,16 @@ export const TopReservationAnalysis = ({
                         </TableCell>
                         <TableCell className='text-center'>
                            <Badge
-                              state={'pending'}
+                              state={'canceled'}
                            >
-                              {client.pending}
+                              {client.canceled}
                            </Badge>
                         </TableCell>
                         <TableCell className='text-center'>
                            <Badge
-                              state={'canceled'}
+                              state={'pending'}
                            >
-                              {client.canceled}
+                              {client.pending}
                            </Badge>
                         </TableCell>
                         <TableCell className='text-center'>

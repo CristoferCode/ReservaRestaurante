@@ -54,8 +54,10 @@ export const usersSlice = createSlice({
       updateUserDetailAction: (state, { payload }) => {
          if (!payload) return;
 
-         state.users = state.users.map(u =>
-            u.id === payload.id ? { ...u, ...payload } : u
+         console.log(payload)
+
+         state.users = state.users.map(user =>
+            user.id === payload?.id ? { ...user, ...payload } : user
          );
 
          if (state.selectedUser?.id === payload.id) {

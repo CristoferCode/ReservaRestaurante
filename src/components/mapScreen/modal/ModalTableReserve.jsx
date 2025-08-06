@@ -72,7 +72,8 @@ export const ModalTableReserve = ({
 }) => {
 
    const {
-      reserveTable
+      reserveTable,
+      isLoading: isLoadingReservation
    } = useReservation()
 
    const {
@@ -131,13 +132,15 @@ export const ModalTableReserve = ({
             idRestaurant: currentRestaurant.id,
             dateStr: currentDate,
             hour: currentHour,
-            idUser: user?.id ?? null,
-            name: user.name || value.name,
-            email: user.email || value.email,
-            phone: user.phone || value.phone || null,
+            idUser: user?.id,
+            name: value.name || user?.name,
+            email: value.email || user?.email,
+            phone: value.phone || user?.phone,
             diners: Number(value.diners),
          }), {
-         onSuccess: () => onClose(),
+         onSuccess: () => {
+            window.requestAnimationFrame(() => onClose());
+         },
       });
    });
 
@@ -159,7 +162,7 @@ export const ModalTableReserve = ({
    );
 
    const renderEmailDescription = user ? (
-      <UserCard user={user} />
+      <UserCard className={'text-accent-foreground'} user={user} />
    ) : errorMessage ? (
       <FormDescription className='text-red-300'>
          {errorMessage}
@@ -299,10 +302,10 @@ export const ModalTableReserve = ({
                      value={user?.phone || phone}
                      onChange={onValueChange}
                      isError={!!phoneValid}
-                     disabled={isBlockedFields}
+                     disabled={user?.phone}
                      variant='crystal'
                   />
-                  {!user && (
+                  {!user?.phone && (
                      <FormDescription>
                         Require el teléfono del usuario
                      </FormDescription>
@@ -314,6 +317,7 @@ export const ModalTableReserve = ({
                      size='lg'
                      type='submit'
                      className='mt-2'
+                     disabled={isLoadingReservation}
                   >
                      Reservar
                   </Button>

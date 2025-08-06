@@ -121,6 +121,7 @@ export class UserSettingService {
             user: {
                ...user.data(),
                id: user.id,
+               phone,
                createdAt: user.data().createdAt.toDate().toISOString(),
                updatedAt: new Date().toISOString(),
             }

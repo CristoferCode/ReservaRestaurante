@@ -10,7 +10,7 @@ import {
    where,
 } from 'firebase/firestore/lite';
 
-import { DateParser, typeStatusTable } from '@/ultils';
+import { DateParser, typeStatusTable, validReservationDate } from '@/ultils';
 
 import { FirebaseDB } from './config';
 
@@ -31,29 +31,12 @@ export class FirebaseReserveService {
       this.MINUTES_tolerance = 15 * 60 * 1000;
    }
 
-
-   isValidReservationDate(dateStr) {
-      const inputDate = new Date(dateStr);
-      const now = new Date();
-
-      const normalizeDate = (date) =>
-         new Date(date.getFullYear(), date.getMonth(), date.getDate());
-
-      const today = normalizeDate(now);
-      const yesterday = new Date(today);
-      yesterday.setDate(today.getDate() - 1);
-
-      const target = normalizeDate(inputDate);
-
-      return target >= yesterday;
-   }
-
    /**
     * @param {{ dateStr: string, idRestaurant: string, diners: number,isValidateHourCurrent: boolean,isValidateDatePassed: boolean }} param0 
     */
    async getAvailableHours({ dateStr, idRestaurant, diners, isValidateHourCurrent = true, isValidateDatePassed = true }) {
       try {
-         if (isValidateDatePassed && !this.isValidReservationDate(dateStr)) {
+         if (isValidateDatePassed && !validReservationDate(dateStr)) {
             throw new Error('No se pueden reservar fechas pasadas');
          }
          const restaurantSnap = await getDoc(doc(FirebaseDB, 'restaurants', idRestaurant));
@@ -300,7 +283,7 @@ export class FirebaseReserveService {
          const auth = getAuth();
          const user = auth.currentUser;
 
-         if (!this.isValidReservationDate(dateStr)) {
+         if (!validReservationDate(dateStr)) {
             throw new Error('No se pueden reservar fechas pasadas');
          }
 

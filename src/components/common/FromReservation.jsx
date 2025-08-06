@@ -164,6 +164,11 @@ export const FromReservation = ({
          },
       }),
       changeValueCallback: ({ name, value }) => {
+         if (name === 'email') {
+            onChangeEmailOrClear({ name, value });
+            return;
+         }
+
          if (name === 'restaurant') {
             const idRestaurant = getIdRestaurantByName(value);
             if (!idRestaurant) return;
@@ -220,8 +225,6 @@ export const FromReservation = ({
             setSelectedTables([])
             return;
          }
-
-         onChangeEmailOrClear({ name, value });
       }
    });
 
@@ -274,6 +277,14 @@ export const FromReservation = ({
    useEffect(() => {
       if (!isOpen) handleCloseModal();
    }, [isOpen])
+
+   useEffect(() => {
+      if (!user?.phone) return;
+      onInitialValues({
+         phone: user?.phone
+      })
+   }, [user])
+
 
    // TODO: Mas adelante agregar validaciones con animaciones en cada input de la sección de reserva 
    const onSubmitReservation = onSubmitForm((data) => {
@@ -371,7 +382,7 @@ export const FromReservation = ({
                   id='name'
                   name='name'
                   type='text'
-                  value={user?.name || name}
+                  value={name || user?.name || ''}
                   onChange={onValueChange}
                   isError={!!nameValid}
                   variant='crystal'

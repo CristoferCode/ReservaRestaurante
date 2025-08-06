@@ -1,7 +1,7 @@
 import { useReservation } from '@/hook/dashboard';
 import { AdminTableToasts } from '@/toasts';
 import { useModalAsync } from '../common';
-import { DialogCancelReserve2 } from '@/components/UI/dialog';
+import { DialigCancelReserve, DialogCancelReserve2 } from '@/components/UI/dialog';
 
 
 export const useReservationActions = () => {
@@ -12,11 +12,14 @@ export const useReservationActions = () => {
       confirmReservation,
       releasedReservation,
       isLoading,
+      blockTempTable,
+      unblockTempTable,
+      cancelATablesReservation,
    } = useReservation();
 
    const cancelReservationWithToastSimple = async (
       reservation,
-      { onSuccess = () => { } } = {}
+      { onSuccess } = {}
    ) => {
       const res = await showAsyncModal(({ onConfirm, onCancel }) => (
          <DialogCancelReserve2
@@ -26,20 +29,39 @@ export const useReservationActions = () => {
          />
       ));
       if (!res) return;
-
       AdminTableToasts.cancelFullReservation(
          cancelFullReservation({
             idUser: reservation.idUser,
             tables: reservation.tables,
             idReservation: reservation.id,
             idRestaurant: reservation.idRestaurant,
-            isNoShow: res?.noShow || false,
+            isNoShow: res.data.isCheck || false,
             hour: reservation.hour,
             dateStr: reservation.dateStr
          }), {
          onSuccess
       });
    };
+
+   const handleCancelReserveWithToast = async ({ table, setHighlightedTableIds = () => { } }) => {
+      const res = await showAsyncModal(({ onConfirm, onCancel }) => (
+         <DialigCancelReserve
+            table={table}
+            onCancel={onCancel}
+            onConfirm={onConfirm}
+            onCancelATablesReservation={cancelATablesReservation}
+            setHighlightedTableIds={setHighlightedTableIds}
+         />
+      ));
+
+      if (res?.data) {
+         AdminTableToasts.cancelFullReservation(
+            cancelFullReservation(res?.data)
+         )
+      }
+
+      setHighlightedTableIds([]);
+   }
 
    const confirmReservationWithToast = (reservation) => {
       AdminTableToasts.confirmReserve(
@@ -67,10 +89,36 @@ export const useReservationActions = () => {
       );
    };
 
+   const blockTempTableWithToast = async ({ table, filter }) => {
+      AdminTableToasts.blockTempTable(
+         blockTempTable({
+            idTable: table.id,
+            idRestaurant: filter.restaurant.id,
+            hour: filter.hour,
+            dateStr: filter.dateStr,
+            status: table.status,
+            idUser: table.user.idUser
+         })
+      );
+   }
+   const unblockTempTableWithToast = async ({ table, filter }) => {
+      AdminTableToasts.unblockTempTable(
+         unblockTempTable({
+            idTable: table.id,
+            idRestaurant: filter.restaurant.id,
+            hour: filter.hour,
+            dateStr: filter.dateStr,
+         })
+      );
+   }
+
    return {
       isLoading,
       cancelReservationWithToastSimple,
+      handleCancelReserveWithToast,
       confirmReservationWithToast,
       releaseReservationWithToast,
+      blockTempTableWithToast,
+      unblockTempTableWithToast
    };
 };

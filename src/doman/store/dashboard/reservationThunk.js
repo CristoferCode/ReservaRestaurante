@@ -157,7 +157,7 @@ export const releasedReservationThunks = (data) => {
          filter,
          callback: () => {
             dispatch(changeStatusTableAction({
-               idTables: data.tablesReservation.map((t) => t.id),
+               idTables: data.tablesReservation?.map((t) => t.id),
                status: typeStatusTable.AVAILABLE
             }));
          }
@@ -182,7 +182,6 @@ export const releasedReservationThunks = (data) => {
  */
 export const reserveTableThunks = (data) => {
    return async (dispatch, getState) => {
-
       const filter = getState().stateFilterRestaurantReducer.filter;
 
       const res = await dasboardServiceProvider.reserveTable(data);
@@ -213,13 +212,15 @@ export const reserveTableThunks = (data) => {
          res.reservationData
       ))
 
-      dispatch(addReservationUserDetail({
-         reservation: res.reservationData,
-         idUser: data.idUser
-      }))
-
-      dispatch(updateUserDetailAction(updatePhone.user))
-
+      if (data.idUser && res.reservationData) {
+         dispatch(addReservationUserDetail({
+            reservation: res.reservationData,
+            idUser: data.idUser
+         }))
+      }
+      if (updatePhone.user) {
+         dispatch(updateUserDetailAction(updatePhone.user))
+      }
       return res.reservation;
    }
 }

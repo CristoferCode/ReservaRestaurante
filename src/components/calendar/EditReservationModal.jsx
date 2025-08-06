@@ -12,6 +12,8 @@ export const EditReservationModal = ({
    onClose,
    reservation,
 }) => {
+   const isPending = reservation?.status === typeStatusTable.PENDING;
+
    const {
       updateReservation,
    } = useReservation()
@@ -22,8 +24,6 @@ export const EditReservationModal = ({
       confirmReservationWithToast,
       cancelReservationWithToastSimple,
    } = useReservationActions();
-
-   const isPending = reservation?.status === typeStatusTable.PENDING;
 
    const handleCancelReservation = (reservation) => {
       cancelReservationWithToastSimple(reservation, {

@@ -13,7 +13,7 @@ import {
    where,
 } from 'firebase/firestore/lite';
 
-import { DateFormat, DateParser, generateCode, typeResource, typeStatusTable } from '@/ultils';
+import { DateFormat, DateParser, generateCode, typeResource, typeStatusTable, validReservationDate } from '@/ultils';
 
 import { endOfMonth, startOfMonth, subMonths } from 'date-fns';
 import { FirebaseDB } from './config';
@@ -521,7 +521,7 @@ export class FirebaseDashboardService {
       comment,
    }) {
       try {
-         if (!this.isValidReservationDate(dateStr)) {
+         if (!validReservationDate(dateStr)) {
             throw new Error('No se pueden reservar fechas pasadas');
          }
 
@@ -1033,7 +1033,6 @@ export class FirebaseDashboardService {
       }
    }
 
-
    async confirmReservation({ idReservation }) {
       try {
          if (!idReservation) {
@@ -1041,6 +1040,13 @@ export class FirebaseDashboardService {
          }
 
          const reservationRef = doc(FirebaseDB, 'reservations', idReservation);
+         
+         const reservation = await getDoc(reservationRef);
+
+         if (!reservation.exists()) {
+            throw new Error('No se encontro la reserva');
+         }
+
          await updateDoc(reservationRef, {
             status: typeStatusTable.CONFIRMED,
             updatedAt: serverTimestamp()
@@ -1065,6 +1071,13 @@ export class FirebaseDashboardService {
          }
 
          const reservationRef = doc(FirebaseDB, 'reservations', idReservation);
+
+         const reservation = await getDoc(reservationRef);
+
+         if (!reservation.exists()) {
+            throw new Error('No se encontro la reserva');
+         }
+
          await updateDoc(reservationRef, {
             status: typeStatusTable.RELEASED,
             updatedAt: serverTimestamp()
