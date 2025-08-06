@@ -1,48 +1,38 @@
-import { useReservation } from '@/hook/dashboard';
+import { useReservation, useReservationActions } from '@/hook/dashboard';
 import { AdminTableToasts } from '@/toasts';
-import { cn, DateParser } from '@/ultils';
+import { cn, DateParser, typeStatusTable } from '@/ultils';
 import { Card2 } from '../UI/card';
-import { Modal } from '../UI/common';
+import { Badge, CardTitle, Modal } from '../UI/common';
 import { Label } from '../UI/from';
-import { FromReservation } from '../common';
-
+import { FromReservation, StateReservationButtons } from '../common';
 
 export const EditReservationModal = ({
    className,
    isOpen,
    onClose,
    reservation,
-   activaBtns = ['update', 'cancel'],
 }) => {
    const {
-      cancelFullReservation,
       updateReservation,
-      isLoading
    } = useReservation()
+
+   const {
+      isLoading,
+      releaseReservationWithToast,
+      confirmReservationWithToast,
+      cancelReservationWithToastSimple,
+   } = useReservationActions();
+
+   const isPending = reservation?.status === typeStatusTable.PENDING;
 
    const onSubmit = (({
       formState,
    }) => {
+      if (!isPending) return;
       AdminTableToasts.updateReservation(
          updateReservation(formState),
       );
    });
-
-   const cancelReservation = () => {
-      AdminTableToasts.cancelFullReservation(
-         cancelFullReservation({
-            idReservation: reservation?.id,
-            tables: reservation?.tables,
-            idRestaurant: reservation.idRestaurant,
-            dateStr: reservation.dateStr,
-            hour: reservation.hour,
-            isNoShow: false,
-         }), {
-         onSuccess: () => {
-            window.requestAnimationFrame(() => onClose());
-         },
-      });
-   }
 
    return (
       <Modal
@@ -52,13 +42,23 @@ export const EditReservationModal = ({
          <Card2 className={cn(
             className
          )}>
-            <Label className={'text-center w-full'}>
-               Editar reserva
-            </Label>
+            <CardTitle className={'flex justify-center items-center gap-4 mb-2'}>
+               <Label>
+                  Estado de la reserva
+               </Label>
+
+               {reservation?.status &&
+                  <Badge
+                     className={'h-5'}
+                     state={reservation.status}
+                  />
+               }
+            </CardTitle>
 
             <FromReservation
-               isOpen={isOpen}
                isEdit={true}
+               isOpen={isOpen}
+               isReadOnly={!isPending}
                onSubmit={onSubmit}
                initialValues={{
                   ...reservation,
@@ -74,18 +74,17 @@ export const EditReservationModal = ({
                      type: 'submit',
                      size: 'lg',
                   },
-                  {
-                     name: 'cancel',
-                     label: 'Cancelar',
-                     variant: 'destructive',
-                     disabled: isLoading,
-                     onClick: cancelReservation,
-                     disabledBySelected: false,
-                     type: 'button',
-                     size: 'lg',
-                  },
-               ].filter(({ name }) => activaBtns.includes(name))}
-            />
+               ]}
+            >
+               <StateReservationButtons
+                  showButtons={['cancel', 'confirm', 'release']}
+                  reservation={reservation}
+                  onCancelReservation={cancelReservationWithToastSimple}
+                  onConfirmReservation={confirmReservationWithToast}
+                  onReleasedReservation={releaseReservationWithToast}
+                  isLoading={isLoading}
+               />
+            </FromReservation>
          </Card2>
       </Modal>
    )

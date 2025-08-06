@@ -9,6 +9,12 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router';
 import { navItemsData } from '.';
 import { Button } from '../UI/common';
+<<<<<<< HEAD
+=======
+import { useAuthStore, useUser } from '@/hook/auth';
+import { UserToasts } from '@/toasts/UserToasts';
+import { UserCard } from '../UI/card';
+>>>>>>> 85a5c2a (Refactor)
 
 
 function useSidebar() {
@@ -66,6 +72,15 @@ export function Sidebar() {
       closeMobileSidebar
    } = useSidebar()
 
+<<<<<<< HEAD
+=======
+   const user = useUser()
+
+   const {
+      logoutPermanently
+   } = useAuthStore();
+
+>>>>>>> 85a5c2a (Refactor)
    const location = useLocation()
    const [openSubmenu, setOpenSubmenu] = useState(null)
    const [subMenuHeight, setSubMenuHeight] = useState({})
@@ -293,6 +308,7 @@ export function Sidebar() {
             </nav>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
             {/* Footer */}
             {/* {showLabels && (
                <div
@@ -320,9 +336,29 @@ export function Sidebar() {
             </footer>
 
 >>>>>>> 175bc2c (Característica: Mejora de la gestión de reservas y las funciones de detalles de usuario)
+=======
+            <footer className='pb-4 flex items-center justify-between'>
+               <UserCard
+                  className={cn(
+                     'text-accent-foreground ml-4 w-[75%]',
+                     !showLabels && 'mx-auto w-fit',
+                  )}
+                  user={user}
+                  mustShow={showLabels ? ['name', 'email'] : []}
+               />
+
+               {showLabels &&
+                  <Link
+                     className='gap-3 px-3 py-2 font-medium transition-all hover:-translate-x-1'
+                     onClick={handleLogout}
+                  >
+                     <LogOut className='rotate-180 ml-auto' />
+                  </Link>
+               }
+            </footer>
+>>>>>>> 85a5c2a (Refactor)
          </aside>
 
-         {/* Main content spacer for desktop */}
          <div className={cn('hidden md:block transition-all duration-300', sidebarWidth)} />
       </div>
    )

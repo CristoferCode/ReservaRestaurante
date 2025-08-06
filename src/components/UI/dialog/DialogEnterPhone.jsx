@@ -51,7 +51,7 @@ export const DialogEnterPhone = ({
          idUser: id,
       })
    });
-   // console.log(isRegisterPhone);
+
    useEffect(() => {
       if (!isRegisterPhone) return;
       onConfirm();

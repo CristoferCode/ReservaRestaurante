@@ -165,13 +165,13 @@
   - **link**: https://restaurantreservation-opal.vercel.app/ 
   ```javascript 
   [
-    {
-      correo: "admin@gamil.com",
+    {         
+      correo: "admin@gmail.com",
       password: "admin123456",
       rol: "admin",
     },
     {
-      correo: "user@gamil.com",
+      correo: "user@gmail.com",
       password: "user123456",
       rol: "user",
     }

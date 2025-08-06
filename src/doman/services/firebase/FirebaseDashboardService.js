@@ -277,7 +277,7 @@ export class FirebaseDashboardService {
                reservation: {
                   code: data?.code ?? null,
                   idReservation: doc.id,
-                  id: data?.id ?? null,
+                  id: doc.id ?? null,
                   timestamp: data?.timestamp ?? null,
                   relatedTables: data?.tables ?? [],
                   hour: data?.hour ?? null,
@@ -615,8 +615,7 @@ export class FirebaseDashboardService {
                restaurantName: restaurant.data().name,
                createdAt: new Date().toISOString().split('T')[0],
                updatedAt: new Date().toISOString().split('T')[0],
-            }
-
+            },
          }
 
       } catch (error) {

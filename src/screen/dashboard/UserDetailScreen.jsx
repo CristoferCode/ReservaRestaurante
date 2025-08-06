@@ -57,6 +57,7 @@ export const UserDetailScreen = () => {
 
          <UsersTable
             onSelectUser={handleOpenModal}
+            isLoading={loadings?.users}
             itemsPerPage={10}
             users={users}
          />

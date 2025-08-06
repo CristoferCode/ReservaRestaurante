@@ -1,10 +1,8 @@
 import { cn, Validations } from '@/ultils';
 import { Modal } from '../UI/common';
 import { useState } from 'react';
-import { useForm, useModalAsync } from '@/hook/common';
-import { useReservation, useReservationFilter, useUserDetail } from '@/hook/dashboard';
-import { AdminTableToasts } from '@/toasts';
-import { DialogCancelReserve2 } from '../UI/dialog/DialigCancelReserve2';
+import { useForm } from '@/hook/common';
+import { useReservationActions, useReservationFilter, useUserDetail } from '@/hook/dashboard';
 import { UserToasts } from '@/toasts/UserToasts';
 import {
    UserDetailHeader,
@@ -14,8 +12,7 @@ import {
    UserDetailTabs,
 } from '.';
 import { Card2 } from '../UI/card';
-import { EditReservationModal } from '../calendar';
-
+import { EditReservationModal } from '../common';
 
 const initValidation = {
    name: [
@@ -46,14 +43,12 @@ export const UserDetailModal = ({
    const [isEditReservation, setIsEditReservation] = useState(false);
    const [currentReservation, setCurrentReservation] = useState({})
 
-   const { showAsyncModal } = useModalAsync();
-
    const {
-      cancelFullReservation,
-      confirmReservation,
-      releasedReservation,
       isLoading,
-   } = useReservation();
+      releaseReservationWithToast,
+      confirmReservationWithToast,
+      cancelReservationWithToastSimple,
+   } = useReservationActions();
 
    const {
       updateProfile,
@@ -93,59 +88,9 @@ export const UserDetailModal = ({
       },
    });
 
-   const handleCancelReservation = async (reservation) => {
-      const res = await showAsyncModal(({ onConfirm, onCancel }) => (
-         <DialogCancelReserve2
-            onCancel={onCancel}
-            onConfirm={onConfirm}
-            reservation={reservation}
-         />
-      ));
-      if (!res) return;
-
-      AdminTableToasts.cancelFullReservation(
-         cancelFullReservation({
-            idUser: reservation.idUser,
-            tables: reservation.tables,
-            idReservation: reservation.id,
-            idRestaurant: reservation.idRestaurant,
-            isNoShow: res.noShow || false,
-            hour: reservation.hour,
-            dateStr: reservation.dateStr
-         })
-      );
-   };
-
-   const handleConfirmReservation = (reservation) => {
-      AdminTableToasts.confirmReserve(
-         confirmReservation({
-            idUser: reservation.idUser,
-            hour: reservation.hour,
-            idReservation: reservation.id,
-            idRestaurant: reservation.idRestaurant,
-            tablesReservation: reservation.tables,
-            dateStr: reservation.dateStr,
-         })
-      );
-   };
-
-   const handleReleasedReservation = (reservation) => {
-      AdminTableToasts.releaseReserve(
-         releasedReservation({
-            hour: reservation.hour,
-            idUser: reservation.idUser,
-            dateStr: reservation.dateStr,
-            idRestaurant: reservation.idRestaurant,
-            tablesReservation: reservation.tables,
-            idReservation: reservation.id,
-         })
-      );
-   };
-
    const handleEditReservetion = (reservation) => {
       setIsEditReservation(true);
       setCurrentReservation(reservation);
-      console.log(currentReservation)
    };
 
    const onSubmit = onSubmitForm((value) => {
@@ -205,9 +150,9 @@ export const UserDetailModal = ({
                handleStatusFilter={handleStatusFilter}
                filteredReservations={filteredReservations}
                handleEditReservetion={handleEditReservetion}
-               handleCancelReservation={handleCancelReservation}
-               handleConfirmReservation={handleConfirmReservation}
-               handleReleasedReservation={handleReleasedReservation}
+               handleCancelReservation={cancelReservationWithToastSimple}
+               handleConfirmReservation={confirmReservationWithToast}
+               handleReleasedReservation={releaseReservationWithToast}
             />
          </Card2>
          {isEditReservation &&

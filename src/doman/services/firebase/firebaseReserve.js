@@ -116,7 +116,8 @@ export class FirebaseReserveService {
                   !tables.some(reserved => reserved.id === table.id)
                );
 
-               const validTables = updatedTables.filter(table => Number(diners) < Number(table.chairs));
+               // TODO: OJO
+               const validTables = updatedTables.filter(table => Number(diners) <= Number(table.chairs));
 
                tableAvailabilityMap.set(hour, validTables);
             }

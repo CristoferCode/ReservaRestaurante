@@ -1,8 +1,8 @@
 import { dasboardServiceProvider, userSettingProvider } from '@/doman/services';
 import { typeStatusTable } from '@/ultils';
-import { addReservationCalendar, removeReservationCalendar, updateReservationCalendar } from './calendarSlice';
+import { addReservationCalendar, changeStatusReservationCalendar, removeReservationCalendar, updateReservationCalendar } from './calendarSlice';
 import { changeStatusTableAction, clearTablesRelationAction, messageErrorAction } from './restaurantResourceSlice';
-import { addReservationUserDetail, changeStatusReservationUserDetail, updateReservationUserDetail } from './usersSlice';
+import { addReservationUserDetail, changeStatusReservationUserDetail, updateReservationUserDetail, updateUserDetailAction } from './usersSlice';
 
 
 const ifChangeStatusTable = ({
@@ -111,18 +111,11 @@ export const confirmReservationThunks = (data) => {
          dispatch(messageErrorAction(res.errorMessage));
          throw res.errorMessage
       }
-      console.log(
-         data,
-         filter
-      )
+
       ifChangeStatusTable({
          data,
          filter,
          callback: () => {
-            console.log({
-               idTables: data.tablesReservation.map((t) => t.id),
-               status: typeStatusTable.CONFIRMED
-            })
             dispatch(changeStatusTableAction({
                idTables: data.tablesReservation.map((t) => t.id),
                status: typeStatusTable.CONFIRMED
@@ -130,9 +123,10 @@ export const confirmReservationThunks = (data) => {
          }
       })
 
-      dispatch(removeReservationCalendar(
-         data.idReservation
-      ));
+      dispatch(changeStatusReservationCalendar({
+         id: data.idReservation,
+         status: typeStatusTable.CONFIRMED
+      }))
 
       dispatch(changeStatusReservationUserDetail({
          id: data.idReservation,
@@ -158,17 +152,10 @@ export const releasedReservationThunks = (data) => {
          throw res.errorMessage
       }
 
-      console.log(data,
-         filter,)
-
       ifChangeStatusTable({
          data,
          filter,
          callback: () => {
-            console.log({
-               idTables: data.tablesReservation.map((t) => t.id),
-               status: typeStatusTable.AVAILABLE
-            })
             dispatch(changeStatusTableAction({
                idTables: data.tablesReservation.map((t) => t.id),
                status: typeStatusTable.AVAILABLE
@@ -176,9 +163,10 @@ export const releasedReservationThunks = (data) => {
          }
       })
 
-      dispatch(removeReservationCalendar(
-         data.idReservation
-      ));
+      dispatch(changeStatusReservationCalendar({
+         id: data.idReservation,
+         status: typeStatusTable.RELEASED
+      }))
 
       dispatch(changeStatusReservationUserDetail({
          id: data.idReservation,
@@ -199,7 +187,10 @@ export const reserveTableThunks = (data) => {
 
       const res = await dasboardServiceProvider.reserveTable(data);
 
-      await userSettingProvider.updateProfile({ phone: data.phone, idUser: data.idUser });
+      const updatePhone = await userSettingProvider.updatePhone({
+         phone: data.phone,
+         idUser: data.idUser
+      });
 
       if (!res.ok) {
          dispatch(messageErrorAction(res.errorMessage));
@@ -218,14 +209,18 @@ export const reserveTableThunks = (data) => {
          }
       })
 
-      dispatch(addReservationCalendar(res.reservationData))
+      dispatch(addReservationCalendar(
+         res.reservationData
+      ))
 
       dispatch(addReservationUserDetail({
          reservation: res.reservationData,
          idUser: data.idUser
       }))
 
-      return res;
+      dispatch(updateUserDetailAction(updatePhone.user))
+
+      return res.reservation;
    }
 }
 /**
@@ -263,7 +258,9 @@ export const updateReservationThunks = (data) => {
          }
       })
 
-      dispatch(updateReservationCalendar(res.reservationData))
+      dispatch(updateReservationCalendar(
+         res.reservationData
+      ))
 
       dispatch(updateReservationUserDetail({
          reservation: res.reservationData,

@@ -1,7 +1,8 @@
-import { cn, DateFormat, typeStatusTable } from '@/ultils';
-import { Calendar, CheckCircle, ChevronDown, ChevronUp, Clock, OctagonX, Pen, Unlink2, Users } from 'lucide-react';
+import { cn, DateFormat } from '@/ultils';
+import { Calendar, ChevronDown, ChevronUp, Clock, Users } from 'lucide-react';
 import { useState } from 'react';
-import { Badge, Button, Card, CardContent, Tooltip, TooltipContent, TooltipTrigger } from '../UI/common';
+import { Badge, Button, Card, CardContent } from '../UI/common';
+import { StateReservationButtons } from '../common';
 
 export const HistorialReservationItem = ({
    reservation,
@@ -16,89 +17,6 @@ export const HistorialReservationItem = ({
    const toggleExpanded = () => {
       setIsExpanded(!isExpanded)
    }
-
-   const renderContent = () => {
-      switch (reservation.status) {
-         case typeStatusTable.PENDING:
-            return (
-               <>
-                  <Tooltip>
-                     <TooltipTrigger asChild>
-                        <Button
-                           onClick={() => onCancelReservation(reservation)}
-                           disabled={isLoading}
-                        >
-                           <OctagonX />
-                        </Button>
-                     </TooltipTrigger>
-                     <TooltipContent
-                        side="right"
-                        className="text-inherit rounded"
-                     >
-                        Cancelar la reserva
-                     </TooltipContent>
-                  </Tooltip>
-
-                  <Tooltip>
-                     <TooltipTrigger asChild>
-                        <Button
-                           onClick={() => onConfirmReservation(reservation)}
-                           disabled={isLoading}
-                        >
-                           <CheckCircle />
-                        </Button>
-                     </TooltipTrigger>
-                     <TooltipContent
-                        side="right"
-                        className="text-inherit rounded"
-                     >
-                        Confirmar la reserva
-                     </TooltipContent>
-                  </Tooltip>
-
-                  <Tooltip>
-                     <TooltipTrigger asChild>
-                        <Button
-                           onClick={() => onEditReservetion(reservation)}
-                           disabled={isLoading}
-                        >
-                           <Pen />
-                        </Button>
-                     </TooltipTrigger>
-                     <TooltipContent
-                        side="right"
-                        className="text-inherit rounded"
-                     >
-                        Editar
-                     </TooltipContent>
-                  </Tooltip>
-               </>
-            );
-
-         case typeStatusTable.CONFIRMED:
-            return (
-               <Tooltip>
-                  <TooltipTrigger asChild>
-                     <Button
-                        onClick={() => onReleasedReservation(reservation)}
-                        disabled={isLoading}
-                     >
-                        <Unlink2 />
-                     </Button>
-                  </TooltipTrigger>
-                  <TooltipContent
-                     side="right"
-                     className="text-inherit rounded"
-                  >
-                     Completar reserva
-                  </TooltipContent>
-               </Tooltip>
-            );
-
-         default:
-            return null;
-      }
-   };
 
    return (
       <Card
@@ -171,7 +89,14 @@ export const HistorialReservationItem = ({
                </div>
 
                <div className='flex flex-row gap-2 sm:gap-3 pt-2 '>
-                  {renderContent()}
+                  <StateReservationButtons
+                     reservation={reservation}
+                     onEditReservetion={onEditReservetion}
+                     onCancelReservation={onCancelReservation}
+                     onConfirmReservation={onConfirmReservation}
+                     onReleasedReservation={onReleasedReservation}
+                     isLoading={isLoading}
+                  />
                </div>
             </div>
          </CardContent>

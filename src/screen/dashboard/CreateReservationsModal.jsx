@@ -1,12 +1,10 @@
 import { FromReservation } from '@/components/common';
 import { Card2 } from '@/components/UI/card';
-import { Button, Modal } from '@/components/UI/common';
-import { FormItem } from '@/components/UI/from';
+import { Modal } from '@/components/UI/common';
 import { useReservation } from '@/hook/dashboard';
 import { useModalReservationsCreate } from '@/hook/modals';
 import { ReservationToast } from '@/toasts';
 import { cn } from '@/ultils';
-import { CalendarPlus, LoaderCircle } from 'lucide-react';
 
 export const CreateReservationsModal = ({
    className
@@ -43,25 +41,17 @@ export const CreateReservationsModal = ({
                isOpen={isOpen}
                onSubmit={onSubmit}
                isEdit={false}
-            >
-               <FormItem>
-                  <Button
-                     size='lg'
-                     type='submit'
-                     className='mt-2 flex items-center gap-2'
-                     disabled={isLoadingReservation}
-                  >
-                     {
-                        isLoadingReservation
-                           ? <LoaderCircle className='animate-spin' />
-                           : <CalendarPlus />
-                     }
-                     <span>
-                        Reservar
-                     </span>
-                  </Button>
-               </FormItem>
-            </FromReservation>
+               btns={[
+                  {
+                     name: 'reserve',
+                     label: 'Reservar',
+                     variant: 'default',
+                     disabled: isLoadingReservation,
+                     type: 'submit',
+                     size: 'lg',
+                  },
+               ]}
+            />
          </Card2>
       </Modal>
    )

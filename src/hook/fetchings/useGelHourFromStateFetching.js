@@ -1,8 +1,7 @@
 import { serviceProvider } from '@/doman/services';
-import { typeStatusTable } from '@/ultils';
 import { useState } from 'react';
 
-export const useGelHourFromStateFetching = (typeState = typeStatusTable.AVAILABLE) => {
+export const useGelHourFromStateFetching = () => {
 
    const [state, setState] = useState({
       hours: [],

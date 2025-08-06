@@ -82,6 +82,58 @@ export class UserSettingService {
       }
    }
 
+   async updatePhone({ phone, idUser }) {
+      try {
+         if (!idUser) {
+            throw new Error('No se proporciono el id de la reserva');
+         }
+
+         const user = await getDoc(doc(FirebaseDB, 'users', idUser));
+
+         if (!user.exists()) {
+            throw new Error('No se encontro el usuario');
+         }
+
+         if (user.data().phone === phone) {
+            const data = user.data();
+            return {
+               ok: true,
+               isEqual: true,
+               user: {
+                  ...data,
+                  id: user.id,
+                  createdAt: data.createdAt.toDate().toISOString(),
+                  updatedAt: data?.updatedAt?.toDate()?.toISOString(),
+               }
+            }
+         }
+
+         const userRef = doc(FirebaseDB, 'users', idUser);
+
+         await updateDoc(userRef, {
+            phone,
+            updatedAt: serverTimestamp()
+         })
+
+         return {
+            ok: true,
+            isEqual: false,
+            user: {
+               ...user.data(),
+               id: user.id,
+               createdAt: user.data().createdAt.toDate().toISOString(),
+               updatedAt: new Date().toISOString(),
+            }
+         }
+
+      } catch (error) {
+         return {
+            ok: false,
+            errorMessage: error.message || 'Error al actualizar el telefono'
+         }
+      }
+   }
+
    async updateProfile({ name, photoURL, phone, address, idUser }) {
       try {
          if (!idUser) {

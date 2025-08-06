@@ -4,7 +4,6 @@ import { Button, CardContent, CardDescription, CardHeader, CardTitle } from '../
 import { useState } from 'react'
 import { Checkbox, Label } from '../from'
 
-
 export const DialogCancelReserve2 = ({
    reservation,
    onConfirm

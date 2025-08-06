@@ -8,6 +8,7 @@ export const calendarSlice = createSlice({
       reservations: [], // Reservas pendientes
       isRequest: false,
       isLoading: false,
+      selectedReservation: null
    },
    reducers: {
       setReservationsAction: (state, { payload }) => {
@@ -15,6 +16,10 @@ export const calendarSlice = createSlice({
          state.isRequest = true;
          state.isLoading = false;
          state.messageError = null
+      },
+
+      setSelectedReservationAction: (state, { payload }) => {
+         state.selectedReservation = payload
       },
 
       addReservationCalendar: (state, { payload }) => {
@@ -37,6 +42,20 @@ export const calendarSlice = createSlice({
          state.reservations = state.reservations.filter(r => r.id !== payload);
       },
 
+      changeStatusReservationCalendar: (state, { payload }) => {
+         if (!payload) return;
+         state.reservations = state.reservations.map(r => {
+            if (r.id === payload.id) {
+               return { ...r, status: payload?.status }
+            }
+            return r
+         });
+
+         if (state.selectedReservation?.id === payload.id) {
+            state.selectedReservation = { ...state.selectedReservation, status: payload?.status }
+         }
+      },
+
       loadingActionCalendar: (state) => {
          state.isLoading = true;
       },
@@ -48,11 +67,13 @@ export const calendarSlice = createSlice({
 });
 
 export const {
+   setSelectedReservationAction,
    setReservationsAction,
    addReservationCalendar,
    updateReservationCalendar,
    loadingActionCalendar,
    messageErrorActionCalendar,
    removeReservationCalendar,
+   changeStatusReservationCalendar,
 } = calendarSlice.actions;
 

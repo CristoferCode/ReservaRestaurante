@@ -1,5 +1,5 @@
 import { getAllUsersThunk, getByIdUserReservationThunk, setSelectedUserAction } from '@/doman/store/dashboard';
-import { DateParser } from '@/ultils';
+import { DateParser, typeStatusTable } from '@/ultils';
 import { Users } from 'lucide-react';
 import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -33,9 +33,24 @@ export const useLoadUsers = () => {
 
       return {
          rate: isNaN(rate) ? '0.0' : rate,
-         rateSuccess
+         rateSuccess,
       }
    };
+
+   const reCalculateMetrics = (user) => {
+      const reservations = user.reservations;
+      const metrics = {
+         total: reservations.length,
+         confirmed: reservations.filter(r => r.status === typeStatusTable.CONFIRMED).length,
+         pending: reservations.filter(r => r.status === typeStatusTable.PENDING).length,
+         canceled: reservations.filter(r => r.status === typeStatusTable.CANCELED).length,
+         released: reservations.filter(r => r.status === typeStatusTable.RELEASED).length,
+      };
+
+      return {
+         metrics
+      }
+   }
 
    const metrics = useMemo(() => {
       return [
@@ -54,13 +69,15 @@ export const useLoadUsers = () => {
 
    const users = useMemo(() => {
       return state.users.map((user) => {
-         // const rate = ((user.metrics?.released || 0) / (user.metrics?.total || 0) * 100).toFixed(1)
+         const { metrics } = reCalculateMetrics(user);
+         const { rate, rateSuccess } = calculateRate({
+            ...user,
+            metrics
+         });
 
-         // let rateSuccess = ((user.metrics?.released / user.totalReservas) * 100).toFixed(1)
-         // rateSuccess = isNaN(rateSuccess) ? 0 : rateSuccess;
-         const { rate, rateSuccess } = calculateRate(user);
          return {
             ...user,
+            metrics,
             updatedAt: DateParser.toString(new Date(user.updatedAt)),
             rate: rate,
             rateSuccess
