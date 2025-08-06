@@ -93,11 +93,12 @@ export const useLoadDashboard = () => {
    const topClientAnalysis = useMemo(() => {
       return state.topClientAnalysis.map((client) => {
          const total = client.confirmed + client.canceled + client.noShow + client.pending
-         const rateSuccess = ((client.confirmed / total) * 100).toFixed(1)
+
+         const rate = ((client?.released || 0) / (client?.total || 0) * 100).toFixed(1)
 
          return {
             ...client,
-            rate: isNaN(rateSuccess) ? '0.0' : rateSuccess,
+            rate: isNaN(rate) ? '0.0' : rate,
             total
          }
       })

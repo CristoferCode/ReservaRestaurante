@@ -97,7 +97,9 @@ export const FromReservation = ({
       isLoadHours,
       errorMessage: hoursErrorMessage,
       isLoading: isLoadingHours
-   } = useGelHourFromStateFetching()
+   } = useGelHourFromStateFetching({
+      isValidateDatePassed: !initialValues
+   })
 
    const {
       tables,

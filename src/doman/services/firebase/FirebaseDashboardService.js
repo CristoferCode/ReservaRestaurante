@@ -521,6 +521,10 @@ export class FirebaseDashboardService {
       comment,
    }) {
       try {
+         if (!this.isValidReservationDate(dateStr)) {
+            throw new Error('No se pueden reservar fechas pasadas');
+         }
+
          if (!idRestaurant || Array.isArray(tables).length <= 0) {
             throw new Error('No se proporciono el id de la reserva');
          }

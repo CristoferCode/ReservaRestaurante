@@ -54,7 +54,7 @@ export const TableAutoFilter = ({
                >
                   <SelectTrigger
                      size='lg'
-                     className='w-full bg-card'
+                     className='w-full min-w-64 bg-card'
                   >
                      <SelectValue
                         placeholder='Seleccione una restaurante'

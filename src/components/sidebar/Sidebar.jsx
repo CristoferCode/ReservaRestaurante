@@ -2,6 +2,7 @@ import { cn } from '@/ultils';
 import {
    AlignLeft,
    ChevronDown,
+   LogOut,
    Menu,
    X,
 } from 'lucide-react';
@@ -9,12 +10,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router';
 import { navItemsData } from '.';
 import { Button } from '../UI/common';
-<<<<<<< HEAD
-=======
 import { useAuthStore, useUser } from '@/hook/auth';
 import { UserToasts } from '@/toasts/UserToasts';
 import { UserCard } from '../UI/card';
->>>>>>> 85a5c2a (Refactor)
 
 
 function useSidebar() {
@@ -72,15 +70,12 @@ export function Sidebar() {
       closeMobileSidebar
    } = useSidebar()
 
-<<<<<<< HEAD
-=======
    const user = useUser()
 
    const {
       logoutPermanently
    } = useAuthStore();
 
->>>>>>> 85a5c2a (Refactor)
    const location = useLocation()
    const [openSubmenu, setOpenSubmenu] = useState(null)
    const [subMenuHeight, setSubMenuHeight] = useState({})
@@ -134,6 +129,11 @@ export function Sidebar() {
       document.addEventListener('mousedown', handleClickOutside)
       return () => document.removeEventListener('mousedown', handleClickOutside)
    }, [isMobileOpen, isMobile, closeMobileSidebar])
+
+
+   const handleLogout = () => {
+      UserToasts.logout(logoutPermanently())
+   }
 
    const sidebarWidth = isExpanded || isHovered || isMobileOpen ? 'w-64' : 'w-20'
    const showLabels = isExpanded || isHovered || isMobileOpen
@@ -196,12 +196,15 @@ export function Sidebar() {
                <AlignLeft className='h-4 w-4' />
             </Button>
 
+
             <div className={cn('p-4')}>
-               {showLabels ? (
-                  <img className='h-16 w-auto' src='/logo-while.png' alt='Logo' />
-               ) : (
-                  <img className='h-10 mx-auto' src='/logo-while.png' alt='Logo' />
-               )}
+               <Link to={'/dashboard'}>
+                  {showLabels ? (
+                     <img className='h-16 w-auto' src='/logo-while.png' alt='Logo' />
+                  ) : (
+                     <img className='h-10 mx-auto' src='/logo-while.png' alt='Logo' />
+                  )}
+               </Link>
             </div>
 
             <nav className='flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-2'>
@@ -307,36 +310,6 @@ export function Sidebar() {
                })}
             </nav>
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-            {/* Footer */}
-            {/* {showLabels && (
-               <div
-                  className='p-4 border-t'
-                  style={{
-                     borderColor: 'var(--sidebar-border)',
-                     color: 'var(--sidebar-foreground)',
-                  }}
-               >
-                  <div className='text-xs opacity-70 text-center'>© 2024 Tu Empresa</div>
-               </div>
-            )} */}
-=======
-            <footer className='pb-2'>
-               <Link
-                  className='flex items-center gap-3 px-3 py-2 mt-3 font-medium transition-all hover:-translate-x-1'
-                  onClick={handleLogout}
-               >
-                  {
-                     !showLabels
-                        ? <LogOut className='rotate-180 m-auto' />
-                        : <LogOut className='rotate-180 ml-auto' />
-                  }
-               </Link>
-            </footer>
-
->>>>>>> 175bc2c (Característica: Mejora de la gestión de reservas y las funciones de detalles de usuario)
-=======
             <footer className='pb-4 flex items-center justify-between'>
                <UserCard
                   className={cn(
@@ -356,7 +329,6 @@ export function Sidebar() {
                   </Link>
                }
             </footer>
->>>>>>> 85a5c2a (Refactor)
          </aside>
 
          <div className={cn('hidden md:block transition-all duration-300', sidebarWidth)} />

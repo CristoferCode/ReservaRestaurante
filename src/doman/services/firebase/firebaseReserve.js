@@ -49,11 +49,11 @@ export class FirebaseReserveService {
    }
 
    /**
-    * @param {{ dateStr: string, idRestaurant: string, diners: number,isValidateHourCurrent: boolean }} param0 
+    * @param {{ dateStr: string, idRestaurant: string, diners: number,isValidateHourCurrent: boolean,isValidateDatePassed: boolean }} param0 
     */
-   async getAvailableHours({ dateStr, idRestaurant, diners, isValidateHourCurrent = true }) {
+   async getAvailableHours({ dateStr, idRestaurant, diners, isValidateHourCurrent = true, isValidateDatePassed = true }) {
       try {
-         if (!this.isValidReservationDate(dateStr)) {
+         if (isValidateDatePassed && !this.isValidReservationDate(dateStr)) {
             throw new Error('No se pueden reservar fechas pasadas');
          }
          const restaurantSnap = await getDoc(doc(FirebaseDB, 'restaurants', idRestaurant));
@@ -299,6 +299,10 @@ export class FirebaseReserveService {
       try {
          const auth = getAuth();
          const user = auth.currentUser;
+
+         if (!this.isValidReservationDate(dateStr)) {
+            throw new Error('No se pueden reservar fechas pasadas');
+         }
 
          if (!user) {
             throw new Error('Usuario no autenticado');
