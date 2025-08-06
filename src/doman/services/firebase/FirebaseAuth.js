@@ -37,29 +37,40 @@ export class FirebaseAuthService {
 
          const userDoc = await getDoc(doc(FirebaseDB, 'users', uid));
 
-         const data = {
-            id: uid,
-            email: email,
-            name: displayName,
-            photoURL: photoURL,
-            phone: '',
-            address: '',
-            role: 'user',
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp()
-         }
-
          if (!userDoc.exists()) {
+            const data = {
+               id: uid,
+               email: email,
+               name: displayName,
+               photoURL: photoURL,
+               phone: '',
+               address: '',
+               role: 'user',
+               createdAt: serverTimestamp(),
+               updatedAt: serverTimestamp()
+            }
             await setDoc(doc(FirebaseDB, 'users', uid), data);
+
+            return {
+               ok: true,
+               token,
+               user: {
+                  ...data,
+                  createdAt: new Date().toISOString(),
+                  updatedAt: new Date().toISOString()
+               }
+            }
          }
 
+         const data = userDoc.data();
          return {
             ok: true,
             token,
             user: {
                ...data,
-               createdAt: new Date().toISOString(),
-               updatedAt: new Date().toISOString()
+               id: uid,
+               createdAt: data.createdAt.toDate()?.toISOString(),
+               updatedAt: data.updatedAt.toDate()?.toISOString()
             }
          };
       } catch (error) {
