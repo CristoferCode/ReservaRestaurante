@@ -35,11 +35,8 @@ export const HomeHeader = () => {
       <header
          className={cn(
             'flex flex-row justify-center items-center gap-40',
-            'w-full h-screen'
+            'w-full h-screen bg-[url(/home/header-image-mobil.webp)] md:bg-[url(/home/header-image.webp)]'
          )}
-         style={{
-            backgroundImage: 'url(/home/header-image.webp)',
-         }}
       >
          <section className='space-y-4'>
             <h1 className='text-secondary-foreground text-5xl font-bold uppercase'>
