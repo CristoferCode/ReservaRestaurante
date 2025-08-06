@@ -49,9 +49,9 @@ export class FirebaseReserveService {
    }
 
    /**
-    * @param {{ dateStr: string, idRestaurant: string, diners: number }} param0 
+    * @param {{ dateStr: string, idRestaurant: string, diners: number,isValidateHourCurrent: boolean }} param0 
     */
-   async getAvailableHours({ dateStr, idRestaurant, diners }) {
+   async getAvailableHours({ dateStr, idRestaurant, diners, isValidateHourCurrent = true }) {
       try {
          if (!this.isValidReservationDate(dateStr)) {
             throw new Error('No se pueden reservar fechas pasadas');
@@ -73,7 +73,7 @@ export class FirebaseReserveService {
             tablesAvailable: totalTables
          })) ?? [];
 
-         if (dateStr === DateParser.toString()) {
+         if (dateStr === DateParser.toString() && isValidateHourCurrent === true) {
             const now = new Date();
             const currentMinutes = now.getHours() * 60 + now.getMinutes();
 

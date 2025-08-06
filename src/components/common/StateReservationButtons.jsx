@@ -20,6 +20,7 @@ export const StateReservationButtons = ({
                   <Tooltip>
                      <TooltipTrigger asChild>
                         <Button
+                           type='button'
                            onClick={() => onCancelReservation(reservation)}
                            disabled={isLoading}
                            variant={'destructive'}
@@ -36,6 +37,7 @@ export const StateReservationButtons = ({
                   <Tooltip>
                      <TooltipTrigger asChild>
                         <Button
+                           type='button'
                            onClick={() => onConfirmReservation(reservation)}
                            disabled={isLoading}
                         >
@@ -51,6 +53,7 @@ export const StateReservationButtons = ({
                   <Tooltip>
                      <TooltipTrigger asChild>
                         <Button
+                           type='button'
                            onClick={() => onEditReservetion(reservation)}
                            disabled={isLoading}
                         >
@@ -71,6 +74,7 @@ export const StateReservationButtons = ({
                <Tooltip>
                   <TooltipTrigger asChild>
                      <Button
+                        type='button'
                         onClick={() => onReleasedReservation(reservation)}
                         disabled={isLoading}
                      >

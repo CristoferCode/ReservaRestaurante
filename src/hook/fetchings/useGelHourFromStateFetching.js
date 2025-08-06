@@ -23,7 +23,7 @@ export const useGelHourFromStateFetching = () => {
          errorMessage: null,
       }));
 
-      const { availableHours, ok, messageError } = await serviceProvider.getAvailableHours({ dateStr, idRestaurant, diners });
+      const { availableHours, ok, messageError } = await serviceProvider.getAvailableHours({ dateStr, idRestaurant, diners, isValidateHourCurrent: false });
 
       if (!ok) {
          setState(prev => ({

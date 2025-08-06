@@ -45,7 +45,7 @@ export const DialogCancelReserve2 = ({
                <Checkbox
                   name={'noShow'}
                   checked={isCheck}
-                  onCheckedChange={({ value }) => setIsCheck(value)}
+                  onChange={({ value }) => setIsCheck(value)}
                />
                <Label>
                   Marcar como no presentado

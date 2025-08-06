@@ -14,7 +14,10 @@ export const useReservationActions = () => {
       isLoading,
    } = useReservation();
 
-   const cancelReservationWithToastSimple = async (reservation) => {
+   const cancelReservationWithToastSimple = async (
+      reservation,
+      { onSuccess = () => { } } = {}
+   ) => {
       const res = await showAsyncModal(({ onConfirm, onCancel }) => (
          <DialogCancelReserve2
             onCancel={onCancel}
@@ -33,8 +36,9 @@ export const useReservationActions = () => {
             isNoShow: res?.noShow || false,
             hour: reservation.hour,
             dateStr: reservation.dateStr
-         })
-      );
+         }), {
+         onSuccess
+      });
    };
 
    const confirmReservationWithToast = (reservation) => {

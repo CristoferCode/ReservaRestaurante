@@ -25,6 +25,12 @@ export const EditReservationModal = ({
 
    const isPending = reservation?.status === typeStatusTable.PENDING;
 
+   const handleCancelReservation = (reservation) => {
+      cancelReservationWithToastSimple(reservation, {
+         onSuccess: () => onClose()
+      })
+   }
+
    const onSubmit = (({
       formState,
    }) => {
@@ -64,22 +70,20 @@ export const EditReservationModal = ({
                   ...reservation,
                   date: DateParser.toDate(reservation?.dateStr),
                }}
-               btns={[
-                  {
-                     name: 'update',
-                     label: 'Actualizar',
-                     variant: 'default',
-                     disabled: isLoading,
-                     disabledBySelected: true,
-                     type: 'submit',
-                     size: 'lg',
-                  },
-               ]}
+               btns={[{
+                  name: 'update',
+                  label: 'Actualizar',
+                  variant: 'default',
+                  disabled: isLoading,
+                  disabledBySelected: true,
+                  type: 'submit',
+                  size: 'lg',
+               }]}
             >
                <StateReservationButtons
                   showButtons={['cancel', 'confirm', 'release']}
                   reservation={reservation}
-                  onCancelReservation={cancelReservationWithToastSimple}
+                  onCancelReservation={handleCancelReservation}
                   onConfirmReservation={confirmReservationWithToast}
                   onReleasedReservation={releaseReservationWithToast}
                   isLoading={isLoading}

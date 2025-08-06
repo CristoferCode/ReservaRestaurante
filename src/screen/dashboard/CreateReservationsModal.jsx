@@ -1,6 +1,7 @@
 import { FromReservation } from '@/components/common';
 import { Card2 } from '@/components/UI/card';
-import { Modal } from '@/components/UI/common';
+import { CardTitle, Modal } from '@/components/UI/common';
+import { Label } from '@/components/UI/from';
 import { useReservation } from '@/hook/dashboard';
 import { useModalReservationsCreate } from '@/hook/modals';
 import { ReservationToast } from '@/toasts';
@@ -37,6 +38,13 @@ export const CreateReservationsModal = ({
          <Card2 className={cn(
             className
          )}>
+
+            <CardTitle className={'flex justify-center items-center gap-4 mb-2'}>
+               <Label>
+                  Crear una reserva
+               </Label>
+            </CardTitle>
+            
             <FromReservation
                isOpen={isOpen}
                onSubmit={onSubmit}
