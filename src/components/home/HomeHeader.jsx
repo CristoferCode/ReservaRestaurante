@@ -35,7 +35,7 @@ export const HomeHeader = () => {
       <header
          className={cn(
             'flex flex-row justify-center items-center gap-40',
-            'w-full h-screen bg-[url(/home/header-image-mobil.webp)] md:bg-[url(/home/header-image.webp)]'
+            'w-full h-screen bg-[url(/home/header-image-mobil.jpg)] md:bg-[url(/home/header-image.webp)]'
          )}
       >
          <section className='space-y-4'>
