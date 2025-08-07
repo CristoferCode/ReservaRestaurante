@@ -669,9 +669,18 @@ export class FirebaseDashboardService {
             updatedAt: serverTimestamp()
          }
 
-         await updateDoc(reservationRef, data);
 
          const reservation = await getDoc(reservationRef);
+
+         if (!reservation.exists()) {
+            throw new Error('No se encontro la reserva');
+         }
+
+         if (reservation.data()?.status !== typeStatusTable.PENDING) {
+            throw new Error('Solo es posible actualizar reservas pendientes');
+         }
+
+         await updateDoc(reservationRef, data);
 
          return {
             ok: true,
@@ -1040,7 +1049,7 @@ export class FirebaseDashboardService {
          }
 
          const reservationRef = doc(FirebaseDB, 'reservations', idReservation);
-         
+
          const reservation = await getDoc(reservationRef);
 
          if (!reservation.exists()) {

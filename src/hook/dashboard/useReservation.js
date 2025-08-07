@@ -43,7 +43,8 @@ export const useReservation = () => {
    const reserveTable = async (data) =>
       withLoading(() => dispatch(reserveTableThunks(data)));
 
-   const updateReservation = async (data) => withLoading(() => dispatch(updateReservationThunks(data)));
+   const updateReservation = async (data) => 
+      withLoading(() => dispatch(updateReservationThunks(data)));
 
    const blockTempTable = (data) => {
       if (!data) return;

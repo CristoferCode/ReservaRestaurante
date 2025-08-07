@@ -211,8 +211,8 @@ export class UserSettingService {
             throw new Error('No se encontro la reserva');
          }
 
-         if (!reservation.data().status !== typeStatusTable.PENDING) {
-            throw new Error(`No se puede actualizar: estado ${reservation.data().status}`);
+         if (reservation.data().status !== typeStatusTable.PENDING) {
+            throw new Error('Solo es posible actualizar reservas pendientes');
          }
 
          const data = {

@@ -29,7 +29,7 @@ export const HistorialReservationItem = ({
                <h3 className='text-sm font-semibold md:text-md'>
                   {reservation.restaurantName}
                </h3>
-               
+
                <span className='ml-auto text-sm font-mono font-semibold text-nowrap'>
                   {reservation.code}
                </span>
@@ -75,6 +75,16 @@ export const HistorialReservationItem = ({
                   <div className='flex items-center gap-2 text-sm'>
                      <Users className='h-4 w-4 text-primary flex-shrink-0' />
                      <span className='font-medium'>{reservation.diners} personas</span>
+                  </div>
+
+                  <div className='space-x-1'>
+                     <span className='font-medium'>Mesas:</span>
+                     {reservation.tables.map((table, index) => (
+                        <span key={table.id}>
+                           {table.name}
+                           {index < reservation.tables.length - 1 && ', '}
+                        </span>
+                     ))}
                   </div>
                </div>
 

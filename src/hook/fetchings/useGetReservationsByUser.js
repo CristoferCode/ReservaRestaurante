@@ -63,13 +63,20 @@ export const useGetReservationsByUser = () => {
       })
    }
 
-   const changeReservation = (reservation) => {
+   const changeReservations = (reservation) => {
       setUser({
-         reservations: state.reservations.map(res => res.id === reservation.id ? reservation : res),
+         reservations: state.reservations.map(res => res.id === reservation.id ? { ...res, ...reservation } : res),
          isLoading: false,
          errorMessage: null
       })
    }
+
+   const deleteByIdReservation = (id) => setUser(prev => ({
+      ...prev,
+      reservations: prev.reservations.filter(res => res.id !== id),
+      isLoading: false,
+      errorMessage: null,
+   }))
 
    return {
       // Valores
@@ -78,8 +85,9 @@ export const useGetReservationsByUser = () => {
       errorMessage: state.errorMessage,
 
       // Funciones
-      changeReservation,
+      changeReservations,
       loadReservationsActive,
-      loadReservationsCancel
+      loadReservationsCancel,
+      deleteByIdReservation
    }
 }
