@@ -21,7 +21,7 @@ import {
    StepFormHeader
 } from '@/components/UI/stepForm';
 import { ModalAsyncProvider } from '@/doman/context/dialogAsync';
-import { useModalReserve } from '@/hook/reservation';
+import { useModalReserve } from '@/hook/reservationFromStep';
 
 export const ReservationScreen = () => {
    const {

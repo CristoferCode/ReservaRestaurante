@@ -32,7 +32,7 @@ export const TableItem = ({
                <>
                   <Tooltip>
                      <TooltipTrigger asChild>
-                        <Button onClick={() => onCancelReserve(table)}>
+                        <Button variant={'destructive'} onClick={() => onCancelReserve(table)}>
                            <OctagonX />
                         </Button>
                      </TooltipTrigger>

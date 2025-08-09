@@ -2,7 +2,7 @@ import { cn, Validations } from '@/ultils';
 import { Modal } from '../UI/common';
 import { useState } from 'react';
 import { useForm } from '@/hook/common';
-import { useReservationActions, useReservationFilter, useUserDetail } from '@/hook/dashboard';
+import { useReservationWithToast, useReservationFilter, useUserDetail } from '@/hook/dashboard';
 import { UserToasts } from '@/toasts/UserToasts';
 import {
    UserDetailHeader,
@@ -48,7 +48,7 @@ export const UserDetailModal = ({
       releaseReservationWithToast,
       confirmReservationWithToast,
       cancelReservationWithToastSimple,
-   } = useReservationActions();
+   } = useReservationWithToast();
 
    const {
       updateProfile,
@@ -142,7 +142,9 @@ export const UserDetailModal = ({
                   <UserDetailInfo selectUser={selectUser} />
                )}
             </div>
+            
             <UserDetailMetrics selectUser={selectUser} />
+
             <UserDetailTabs
                isLoading={isLoading}
                selectUser={selectUser}
@@ -155,13 +157,15 @@ export const UserDetailModal = ({
                handleReleasedReservation={releaseReservationWithToast}
             />
          </Card2>
+         
          {isEditReservation &&
             <EditReservationModal
                className={'w-xl'}
                activaBtns={['update']}
+               isActiveOverflow={false}
                isOpen={isEditReservation}
-               onClose={() => setIsEditReservation(false)}
                reservation={currentReservation}
+               onClose={() => setIsEditReservation(false)}
             />
          }
       </Modal>

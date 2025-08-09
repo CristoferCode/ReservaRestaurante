@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 import { cn } from '@/ultils/cn';
 
 import { useForm } from '@/hook/common';
-import { useGetAllRestaurants, useReserve, useStepFormContext } from '@/hook/reservation';
+import { useGetAllRestaurants, useReservationFromStep, useStepFormContext } from '@/hook/reservationFromStep';
 import { Button } from '../UI/common';
 import {
    Form,
@@ -66,7 +66,7 @@ export const ReservationStepInfo = ({
 
    const { restaurants } = useGetAllRestaurants();
    const { nextStep } = useStepFormContext();
-   const { reserveSetInfo, from } = useReserve();
+   const { reserveSetInfo, from } = useReservationFromStep();
 
    const {
       onSubmitForm,

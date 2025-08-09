@@ -81,7 +81,7 @@ export const HistorialReservationItem = ({
                      <span className='font-medium'>Mesas:</span>
                      {reservation.tables.map((table, index) => (
                         <span key={table.id}>
-                           {table.name}
+                           {table.name} ({table.chairs} sillas)
                            {index < reservation.tables.length - 1 && ', '}
                         </span>
                      ))}

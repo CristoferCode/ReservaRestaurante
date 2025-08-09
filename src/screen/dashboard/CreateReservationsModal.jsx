@@ -18,7 +18,6 @@ export const CreateReservationsModal = ({
    } = useReservation()
 
    const onSubmit = (({
-      // selectedTables,
       formState,
       resetForm,
    }) => {
@@ -44,7 +43,7 @@ export const CreateReservationsModal = ({
                   Crear una reserva
                </Label>
             </CardTitle>
-            
+
             <FromReservation
                isOpen={isOpen}
                onSubmit={onSubmit}

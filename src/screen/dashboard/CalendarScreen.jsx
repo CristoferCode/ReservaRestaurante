@@ -1,5 +1,6 @@
 
-import { CreateReservationModal, EditReservationModal } from '@/components/calendar';
+import { CreateReservationModal, EditStateReserveModal } from '@/components/calendar';
+import { EditReservationModal } from '@/components/common';
 import { CardLoadding } from '@/components/UI/card';
 import { ModalAsyncProvider } from '@/doman/context/dialogAsync';
 import { useLoadDataCalendar } from '@/hook/dashboard';
@@ -25,6 +26,7 @@ export const localizer = dateFnsLocalizer({
 export const CalendarScreen = () => {
    const [isOpenCreateReserve, setisOpenCreateReserve] = useState(false)
    const [isOpenStateReserve, setisOpenStateReserve] = useState(false)
+   const [isOpenEditReserve, setIsOpenEditReserve] = useState(false)
 
    const {
       selectedReservation,
@@ -73,6 +75,10 @@ export const CalendarScreen = () => {
          end: end,
       })
    }, [])
+
+   const handleEditReservetion = () => {
+      setIsOpenEditReserve(true)
+   }
 
    const style = {
       height: '90dvh',
@@ -126,11 +132,23 @@ export const CalendarScreen = () => {
          <ModalAsyncProvider>
             {
                isOpenStateReserve &&
-               <EditReservationModal
+               <EditStateReserveModal
                   className={'md:w-xl'}
                   isOpen={isOpenStateReserve}
-                  onClose={() => setisOpenStateReserve(false)}
                   reservation={selectedReservation}
+                  onClose={() => setisOpenStateReserve(false)}
+                  isOpenModalEditReservation={handleEditReservetion}
+               />
+            }
+            {
+               isOpenEditReserve &&
+               <EditReservationModal
+                  className={'md:w-xl'}
+                  activaBtns={['update']}
+                  isActiveOverflow={false}
+                  isOpen={isOpenEditReserve}
+                  reservation={selectedReservation}
+                  onClose={() => setIsOpenEditReserve(false)}
                />
             }
          </ModalAsyncProvider>

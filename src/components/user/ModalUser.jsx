@@ -1,17 +1,17 @@
 import { ModalAsyncProvider } from '@/doman/context/dialogAsync'
-import { useModalUser } from '@/hook/modals'
+import { useUserModal } from '@/hook/modals'
 import { cn } from '@/ultils'
 import { CalendarCheck, CalendarX2, CircleUser } from 'lucide-react'
 import { HistoryReservationActive, HistoryReservationCancel, ProfileUser } from '.'
 import { Card2 } from '../UI/card'
 import { Modal, Tabs, TabsContent, TabsList, TabsTrigger } from '../UI/common'
 
-export const ModalUser = () => {
+export const UserModal = () => {
    const {
       closeModal,
       isOpen,
       paramsRef,
-   } = useModalUser()
+   } = useUserModal()
 
    if (!isOpen) return null
 

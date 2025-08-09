@@ -1,4 +1,4 @@
-export const validReservationDate = (dateStr) => {
+export const validDateReservation = (dateStr) => {
    const inputDate = new Date(dateStr);
    const now = new Date();
 

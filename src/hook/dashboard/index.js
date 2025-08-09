@@ -15,4 +15,4 @@ export * from './useStateFilterRestaurant';
 export * from './useTableStats';
 export * from './useUserDetail';
 export * from './useReservationFilter';
-export * from './useReservationActions'
+export * from './useReservationWithToast'

@@ -4,14 +4,14 @@ import { cn } from '@/ultils/cn';
 import { Button } from '../UI/common';
 
 
-import { useReserve, useStepFormContext } from '@/hook/reservation';
+import { useReservationFromStep, useStepFormContext } from '@/hook/reservationFromStep';
 import {
    ReservationLoadding,
    ReservationTitle
 } from '.';
 
 export const ReservationStepHour = ({ className }) => {
-   const { isLoading, availableHour, reserveSetHour } = useReserve();
+   const { isLoading, availableHour, reserveSetHour } = useReservationFromStep();
    const { nextStep } = useStepFormContext();
 
    const onValueChange = (data) => {

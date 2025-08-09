@@ -4,7 +4,7 @@ import { useModalAsync } from '../common';
 import { DialigCancelReserve, DialogCancelReserve2 } from '@/components/UI/dialog';
 
 
-export const useReservationActions = () => {
+export const useReservationWithToast = () => {
    const { showAsyncModal } = useModalAsync();
 
    const {

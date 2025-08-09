@@ -12,6 +12,7 @@ export const EditReservationModal = ({
    loading,
    reservation,
    updateReservation,
+   isActiveOverflow = true
 }) => {
 
    const onSubmit = (({
@@ -27,6 +28,7 @@ export const EditReservationModal = ({
       <Modal
          isOpen={isOpen}
          onClose={onClose}
+         isActiveOverflow={isActiveOverflow}
       >
          <Card2 className={cn(
             className

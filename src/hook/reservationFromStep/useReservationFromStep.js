@@ -19,7 +19,7 @@ import {
 } from '@/doman/store/reserve';
 import { DateParser, typeStatusTable } from '@/ultils';
 
-export const useReserve = () => {
+export const useReservationFromStep = () => {
    const dispatch = useDispatch();
 
    const {

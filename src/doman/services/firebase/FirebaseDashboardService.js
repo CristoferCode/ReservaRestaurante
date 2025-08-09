@@ -13,7 +13,7 @@ import {
    where,
 } from 'firebase/firestore/lite';
 
-import { DateFormat, DateParser, generateCode, typeResource, typeStatusTable, validReservationDate } from '@/ultils';
+import { DateDiff, DateFormat, DateParser, generateCode, typeResource, typeStatusTable, validDateReservation, validHourReservation } from '@/ultils';
 
 import { endOfMonth, startOfMonth, subMonths } from 'date-fns';
 import { FirebaseDB } from './config';
@@ -521,12 +521,25 @@ export class FirebaseDashboardService {
       comment,
    }) {
       try {
-         if (!validReservationDate(dateStr)) {
+         if (!validDateReservation(dateStr)) {
+            if (!validHourReservation(hour)) {
+               throw new Error('No se pueden reservar horas pasadas');
+            }
             throw new Error('No se pueden reservar fechas pasadas');
          }
 
-         if (!idRestaurant || Array.isArray(tables).length <= 0) {
-            throw new Error('No se proporciono el id de la reserva');
+         if (DateDiff.isSameDate(dateStr)) {
+            if (!validHourReservation(hour)) {
+               throw new Error('No se pueden reservar horas pasadas');
+            }
+         }
+
+         if (!idRestaurant) {
+            throw new Error('Seleccione un restaurante');
+         }
+
+         if (!Array.isArray(tables) || tables.length <= 0) {
+            throw new Error('No se proporciono las mesas');
          }
 
          if (typeof diners !== 'number' || diners <= 0) {
@@ -542,6 +555,14 @@ export class FirebaseDashboardService {
          ));
 
          const restaurant = await getDoc(doc(FirebaseDB, 'restaurants', idRestaurant));
+
+         if (!restaurant.exists()) {
+            throw new Error('El restaurante no existe');
+         }
+
+         if (restaurant.data().status === false) {
+            throw new Error('El restaurante se encuentra cerrado');
+         }
 
          // Verificamos si alguna mesa ya está reservada
          const reservedTables = new Set();
@@ -577,11 +598,12 @@ export class FirebaseDashboardService {
             id: reservationRef.id,
             idUser: idUser ?? null,
             idRestaurant,
+            restaurantName: restaurant.data().name,
             diners: diners ?? 1,
             reason: reason ?? 'Sin motivo',
             hour,
             comment: comment ?? 'Reserva por el panel de administrador',
-            tables: tables.map(t => ({ id: t.id, name: t.name })),
+            tables: tables,
             dateStr: dateStr,
             code: newCode,
             status: typeStatusTable.PENDING,
@@ -607,7 +629,7 @@ export class FirebaseDashboardService {
                dateStr,
                hour,
                timestamp: timestamp,
-               relatedTables: tables.map(t => ({ id: t.id, name: t.name }))
+               relatedTables: tables
             },
             user: {
                name,

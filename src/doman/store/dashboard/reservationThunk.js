@@ -184,7 +184,10 @@ export const reserveTableThunks = (data) => {
    return async (dispatch, getState) => {
       const filter = getState().stateFilterRestaurantReducer.filter;
 
-      const res = await dasboardServiceProvider.reserveTable(data);
+      const res = await dasboardServiceProvider.reserveTable({
+         ...data,
+         tables: data.tables?.map(table => ({ id: table.id, name: table.name, chairs: table.chairs }))
+      });
 
       const updatePhone = await userSettingProvider.updatePhone({
          phone: data.phone,

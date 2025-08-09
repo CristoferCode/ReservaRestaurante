@@ -103,12 +103,13 @@ export const HistoryReservationActive = () => {
          {
             isOpenEdit && (
                <EditReservationModal
-                  onClose={() => setIsOpenEdit(false)}
-                  loading={loading}
-                  isOpen={isOpenEdit}
-                  reservation={selectReserve}
-                  updateReservation={handleUpdateReservation}
+                  isActiveOverflow={false}
                   className={'md:w-[35rem]'}
+                  onClose={() => setIsOpenEdit(false)}
+                  updateReservation={handleUpdateReservation}
+                  reservation={selectReserve}
+                  isOpen={isOpenEdit}
+                  loading={loading}
                />
             )
          }

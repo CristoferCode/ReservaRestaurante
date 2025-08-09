@@ -1,4 +1,4 @@
-import { DateParser, typeStatusTable } from '@/ultils';
+import { DateParser, typeStatusTable, validDateReservation, validHourReservation } from '@/ultils';
 import { collection, doc, getDoc, getDocs, query, serverTimestamp, updateDoc, where } from 'firebase/firestore/lite';
 import { FirebaseDB } from './config';
 
@@ -197,6 +197,15 @@ export class UserSettingService {
          if (!idReservation) {
             throw new Error('No se proporciono el id de la reserva');
          }
+
+         if (!validDateReservation(dateStr)) {
+            throw new Error('No se pueden actualizar la reserva en una fecha pasada');
+         }
+
+         if (!validHourReservation(hour)) {
+            throw new Error('No es posible actualizar la reserva en esa hora pasada');
+         }
+
          const user = await getDoc(doc(FirebaseDB, 'users', idUser));
 
          if (!user.exists()) {

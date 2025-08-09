@@ -1,6 +1,6 @@
 import { Object } from '@/components/UI/resource';
 import { usePaintedGrid } from '@/hook/common';
-import { useReservationActions } from '@/hook/dashboard';
+import { useReservationWithToast } from '@/hook/dashboard';
 import { typeResource } from '@/ultils';
 import { useState } from 'react';
 import { TableItem } from '..';
@@ -21,7 +21,7 @@ export const MapState = ({
       releaseReservationWithToast,
       unblockTempTableWithToast,
       blockTempTableWithToast
-   } = useReservationActions()
+   } = useReservationWithToast()
 
    const handleCancelReserve = (table) => {
       handleCancelReserveWithToast({

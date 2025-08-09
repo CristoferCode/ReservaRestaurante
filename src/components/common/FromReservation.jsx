@@ -1,13 +1,26 @@
-import { useUserSearch } from '@/hook/auth';
-import { useForm, useToastErrorHandler } from '@/hook/common';
 import { useGelHourFromStateFetching, useGetAllRestauranFetching, useGetTablesFromStateFetching, useGetUserFetchin } from '@/hook/fetchings';
-import { cn, DateParser, typeStatusTable } from '@/ultils';
+import { cn, DateParser, typeStatusTable, Validations } from '@/ultils';
 import { LoaderCircle, UserSearch } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { mergeInitialValues, useForm, useToastErrorHandler } from '@/hook/common';
+import { memo, useEffect, useRef, useState } from 'react';
 import { CalendarButton } from '../UI/calendar';
+import { useUserSearch } from '@/hook/auth';
 import { UserCard } from '../UI/card';
 import { Button } from '../UI/common';
-import { Form, FormItem, FormLabel, FromGroup, Input, MultiSelect, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../UI/from';
+import {
+   Form,
+   FormItem,
+   FormLabel,
+   FromGroup,
+   Input,
+   MultiSelect,
+   Select,
+   SelectContent,
+   SelectItem,
+   SelectTrigger,
+   SelectValue
+} from '../UI/from';
+import toast from 'react-hot-toast';
 
 const schema = {
    initial: {
@@ -21,7 +34,7 @@ const schema = {
    },
    valid: {
       email: [
-         (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+         (value) => Validations.email(value),
          'Ingrese un email válido',
       ],
       name: [
@@ -29,7 +42,7 @@ const schema = {
          'El nombre es obligatorio',
       ],
       phone: [
-         (value) => /^9\d{8}$/.test(value),
+         (value) => Validations.phone(value),
          'Ingrese un teléfono válido de 9 dígitos que comience con 9',
       ],
       diners: [
@@ -47,18 +60,7 @@ const schema = {
    },
 };
 
-const mergeInitialValues = ({ initial, newInitial }) => {
-   if (!newInitial) return initial;
-   const initialValues = Object.entries(initial).map(([key, value]) => {
-      const newValue = newInitial[key] ?? value;
-      return [key, newValue];
-   })
-   return {
-      ...Object.fromEntries(initialValues)
-   }
-}
-
-export const FromReservation = ({
+export const FromReservation = memo(({
    formId,
    isOpen,
    onSubmit,
@@ -70,6 +72,12 @@ export const FromReservation = ({
    isEdit = false,
 }) => {
    const [selectedTables, setSelectedTables] = useState(initialValues?.tables || []);
+
+   const chairsInitialValueRef = useRef(
+      initialValues?.tables
+         ? initialValues?.tables.map(t => Number(t.chairs)).reduce((a, b) => a + b, 0)
+         : 0
+   );
 
    const {
       restaurants,
@@ -105,7 +113,6 @@ export const FromReservation = ({
       tables,
       loadTables,
       clearTables,
-      isLoadTables,
       errorMessage: tablesErrorMessage,
       isLoading: isLoadingTables,
    } = useGetTablesFromStateFetching(typeStatusTable.AVAILABLE)
@@ -169,17 +176,16 @@ export const FromReservation = ({
             return;
          }
 
+         if (!['restaurant', 'date', 'hour', 'diners'].includes(name)) return;
+
          if (name === 'restaurant') {
             const idRestaurant = getIdRestaurantByName(value);
             if (!idRestaurant) return;
             loadHours({
                idRestaurant: idRestaurant,
                dateStr: DateParser.toString(date),
-               diners: diners
+               diners: Number(diners),
             });
-
-            setSelectedTables([])
-            return;
          };
 
          if (name === 'date') {
@@ -189,11 +195,8 @@ export const FromReservation = ({
             loadHours({
                idRestaurant: idRestaurant,
                dateStr: DateParser.toString(value),
-               diners: diners
+               diners: Number(diners),
             });
-
-            setSelectedTables([])
-            return;
          }
 
          if (name === 'hour') {
@@ -203,12 +206,9 @@ export const FromReservation = ({
             loadTables({
                idRestaurant: idRestaurant,
                dateStr: DateParser.toString(date),
+               diners: Number(diners),
                hour: value,
-               diners: diners
             });
-
-            setSelectedTables([])
-            return;
          }
 
          if (name === 'diners') {
@@ -218,13 +218,11 @@ export const FromReservation = ({
             loadTables({
                idRestaurant: idRestaurant,
                dateStr: DateParser.toString(date),
+               diners: Number(value),
                hour: hour,
-               diners: value,
             });
-
-            setSelectedTables([])
-            return;
          }
+         setSelectedTables([])
       }
    });
 
@@ -233,12 +231,6 @@ export const FromReservation = ({
       clearHours();
       clearTables();
       onResetForm();
-      setSelectedTables([])
-   }
-   const handleCloseModal = () => {
-      onValueChange({ name: 'restaurant', value: '' });
-      clearHours();
-      clearTables();
       setSelectedTables([])
    }
 
@@ -255,14 +247,14 @@ export const FromReservation = ({
       loadHours({
          idRestaurant: initialValues?.idRestaurant,
          dateStr: DateParser.toString(date),
-         diners: initialValues?.diners
+         diners: Math.max(initialValues?.diners - chairsInitialValueRef.current, 0)
       });
 
       loadTables({
          idRestaurant: initialValues?.idRestaurant,
          dateStr: DateParser.toString(date),
          hour: initialValues?.hour,
-         diners: initialValues?.diners
+         diners: Math.max(initialValues?.diners - chairsInitialValueRef.current, 0)
       });
    }, [isEdit])
 
@@ -275,7 +267,7 @@ export const FromReservation = ({
    }, [isEdit, hours])
 
    useEffect(() => {
-      if (!isOpen) handleCloseModal();
+      if (!isOpen) resetForm();
    }, [isOpen])
 
    useEffect(() => {
@@ -285,13 +277,16 @@ export const FromReservation = ({
       })
    }, [user])
 
-
-   // TODO: Mas adelante agregar validaciones con animaciones en cada input de la sección de reserva 
    const onSubmitReservation = onSubmitForm((data) => {
       if (!hasSearched && !isEdit) {
          animateSearchButton();
          return;
       }
+
+      if (selectedTables.length === 0) {
+         toast.error('Debes seleccionar al menos una mesa');
+         return
+      };
 
       onSubmit({
          resetForm,
@@ -310,6 +305,16 @@ export const FromReservation = ({
          },
       })
    });
+
+   const handleSelectedTables = (table) => {
+      const chairsNew = table.reduce((acc, table) => acc + table.chairs, 0);
+      if (chairsNew > diners) {
+         toast.error('La cantidad de asientos no puede superar a la cantidad de comensales');
+         return
+      };
+
+      setSelectedTables(table);
+   }
 
    const renderEmailIcon = (
       <Button
@@ -416,8 +421,6 @@ export const FromReservation = ({
             Información de la reserva
          </FormLabel>
 
-         {/* Informacion de la reserva */}
-
          <FromGroup className={'md:grid md:grid-cols-2 gap-4'}>
             <FormItem>
                <FormLabel
@@ -428,13 +431,13 @@ export const FromReservation = ({
 
                <Select
                   name={'diners'}
+                  type='number'
                   value={String(diners) || undefined}
                   onValueChange={onValueChange}
                   disabled={isReadOnly}
                >
                   <SelectTrigger
                      isError={!!dinersValid}
-                     // disabled={isBlockedFields}
                      variant='crystal'
                      className='w-full shadow-xl'
                   >
@@ -562,10 +565,8 @@ export const FromReservation = ({
             <MultiSelect
                options={tables}
                selected={selectedTables}
-               onChange={setSelectedTables}
-               disabled={isLoadingTables || isReadOnly}
+               onChange={handleSelectedTables}
                isLoading={isLoadingTables}
-               placeholder='Seleccione mesas'
                className='w-full'
             />
          </FormItem>
@@ -582,7 +583,7 @@ export const FromReservation = ({
                            type={item.type || 'button'}
                            variant={item.variant || 'default'}
                            onClick={item.type !== 'submit' ? item.onClick : null}
-                           disabled={item.disabled || item.disabledBySelected && selectedTables.length === 0 || isReadOnly}
+                           disabled={item.disabled || item.disabledBySelected || selectedTables.length === 0 || isReadOnly}
                         >
                            {item.label}
                         </Button>
@@ -594,4 +595,6 @@ export const FromReservation = ({
          }
       </Form>
    )
-}
+})
+
+FromReservation.displayName = 'FormReservation'

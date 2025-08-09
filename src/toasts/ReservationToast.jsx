@@ -1,7 +1,6 @@
 import { toast } from 'react-hot-toast';
 
 import {
-   ReservaRejected,
    ReservaSuccess
 } from '@/components/reservation';
 import { isObjetError } from '@/ultils';
@@ -34,9 +33,9 @@ export const ReservationToast = (promise, { onSuccess, onError, onFinally } = {}
          });
       })
       .catch((err) => {
-         toast((t) => {
+         toast(() => {
             onError && onError(err);
-            return <ReservaRejected t={t} message={err.message || 'Ocurrió un error inesperado'} />;
+            // return <ReservaRejected t={t} message={err.message || 'Ocurrió un error inesperado'} />;
          }, {
             duration: 6000,
          });

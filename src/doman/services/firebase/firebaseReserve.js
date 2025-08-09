@@ -10,7 +10,7 @@ import {
    where,
 } from 'firebase/firestore/lite';
 
-import { DateParser, typeStatusTable, validReservationDate } from '@/ultils';
+import { DateDiff, DateParser, typeStatusTable, validDateReservation, validHourReservation } from '@/ultils';
 
 import { FirebaseDB } from './config';
 
@@ -36,7 +36,8 @@ export class FirebaseReserveService {
     */
    async getAvailableHours({ dateStr, idRestaurant, diners, isValidateHourCurrent = true, isValidateDatePassed = true }) {
       try {
-         if (isValidateDatePassed && !validReservationDate(dateStr)) {
+
+         if (isValidateDatePassed && !validDateReservation(dateStr)) {
             throw new Error('No se pueden reservar fechas pasadas');
          }
          const restaurantSnap = await getDoc(doc(FirebaseDB, 'restaurants', idRestaurant));
@@ -146,6 +147,7 @@ export class FirebaseReserveService {
     * @returns 
     */
    async getTables({ dateStr, idRestaurant, hour, diners }) {
+
       if (!idRestaurant) {
          throw new Error('No se proporciono el id del restaurante');
       }
@@ -197,9 +199,6 @@ export class FirebaseReserveService {
 
       const blockTempTablesSet = new Set(blockTempTables.docs.map(doc => doc.data().idTable));
 
-      // Debemos obtener el restaurante y sus mesas corespodientes
-      // Obtener las reservas en esa fecha
-      // Construir la información de las mesas, si esta reservada o no, En cuanto tiempo se va desocupar
       return tables.docs.map((doc) => {
          const data = doc.data();
          return {
@@ -283,21 +282,47 @@ export class FirebaseReserveService {
          const auth = getAuth();
          const user = auth.currentUser;
 
-         if (!validReservationDate(dateStr)) {
+         if (!validDateReservation(dateStr)) {
+            if (!validHourReservation(hour)) {
+               throw new Error('No se pueden reservar horas pasadas');
+            }
             throw new Error('No se pueden reservar fechas pasadas');
          }
 
-         if (!user) {
-            throw new Error('Usuario no autenticado');
+         if (DateDiff.isSameDate(dateStr)) {
+            if (!validHourReservation(hour)) {
+               throw new Error('No se pueden reservar horas pasadas');
+            }
          }
 
-         const userSnap = await getDoc(doc(FirebaseDB, 'users', user.uid));
+         if (!idRestaurant) {
+            throw new Error('Seleccione un restaurante');
+         }
+
+         if (!Array.isArray(tables) || tables.length <= 0) {
+            throw new Error('No se proporciono las mesas');
+         }
+
+         if (typeof diners !== 'number' || diners <= 0) {
+            throw new Error('El número de comensales no es válido');
+         }
+
+         const [userSnap, restaurant] = await Promise.all([
+            getDoc(doc(FirebaseDB, 'users', user.uid)),
+            getDoc(doc(FirebaseDB, 'restaurants', idRestaurant))
+         ]);
 
          if (!userSnap.exists()) {
             throw new Error('El usuario no existe');
          }
 
-         // TODO faltaria validar si la mesa fue bloqueada
+         if (!restaurant.exists()) {
+            throw new Error('El restaurante no existe');
+         }
+
+         if (restaurant.data().status === false) {
+            throw new Error('El restaurante se encuentra cerrado');
+         }
 
          const querySnapshot = await getDocs(query(
             collection(FirebaseDB, 'reservations'),
@@ -312,8 +337,6 @@ export class FirebaseReserveService {
             throw new Error('Ya realizaste una reserva en hora la ' + hour);
          }
 
-         // Buscar todas las reservas confirmadas para ese restaurante, fecha y hora
-
          const reservations = await getDocs(query(
             collection(FirebaseDB, 'reservations'),
             where('idRestaurant', '==', idRestaurant),
@@ -322,7 +345,6 @@ export class FirebaseReserveService {
             where('status', 'in', ['confirmed', 'pending'])
          ));
 
-         // Verificamos si alguna mesa ya está reservada
          const reservedTables = new Set();
          const existingCodes = new Set();
 
@@ -359,6 +381,7 @@ export class FirebaseReserveService {
             ion: reservationRef.id,
             idUser: uid,
             idRestaurant,
+            restaurantName: restaurant.data().name,
             diners,
             reason,
             hour,
