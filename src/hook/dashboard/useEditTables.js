@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 
 import { toggleIsEditAction } from '@/doman/store/dashboard';
-import { useModalTableEditProperty } from '../map/useModalTableEditProperty';
+import { useModalTableEditProperty } from '../mapPage/useModalTableEditProperty';
 import { useSlideOverObjectCreate } from '../slideover';
 import { useDimensionMap } from './useDimensionMap';
 import { useModalTableEdit } from './useModalTableEdit';

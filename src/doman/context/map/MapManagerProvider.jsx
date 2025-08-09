@@ -1,4 +1,4 @@
-import { MapEditManager, MapStateManager } from '@/components/mapScreen';
+import { MapEditManager, MapStateManager } from '@/components/mapPage';
 import { CardTable } from '@/components/UI/table';
 import { useGenerateResources, useLoadRestaurantResource, useRestaurantUi, useStateFilterRestaurant } from '@/hook/dashboard';
 import { cn } from '@/ultils';
