@@ -1,12 +1,10 @@
+import { loadDataFiltersThunks } from '@/doman/store/mapPage';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import {
-   loadDataFiltersThunks,
-} from '@/doman/store/dashboard';
 
-export const useLoadFilterRestaurant = () => {
-   const state = useSelector((state) => state.stateFilterRestaurantReducer)
+export const useLoadFilterMap = () => {
+   const state = useSelector((state) => state.filterMapReducer)
 
    const dispatch = useDispatch();
 

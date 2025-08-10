@@ -17,8 +17,8 @@ export const typeStatus = {
    COMPLETED: 'completed',
 }
 
-export const reserveSlice = createSlice({
-   name: 'reverse',
+export const reservationSlice = createSlice({
+   name: 'reservation',
 
    initialState: {
       stateReserve: typeStatus.ACTIVE,
@@ -242,4 +242,4 @@ export const {
    reserveSetObjectAction,
 
    reserveResetAction,
-} = reserveSlice.actions;
+} = reservationSlice.actions;

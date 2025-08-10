@@ -34,8 +34,11 @@ export const EditRestaurantModal = ({
 
       if (!res) return;
       AdminTableToasts.deleteRestaurant(
-         deleteRestaurant(selectedRestaurant.id)
-      )
+         deleteRestaurant(selectedRestaurant.id), {
+         onSuccess: () => {
+            requestAnimationFrame(() => onClose?.());
+         },
+      })
    }
 
    const onSubmit = ({ form }) => {

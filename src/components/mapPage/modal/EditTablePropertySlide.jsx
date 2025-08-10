@@ -93,7 +93,9 @@ export const EditTablePropertySlide = ({
          positionY: selectedResource?.positionY,
          rotation: selectedResource?.rotation,
          size: selectedResource?.size,
-         chairs: selectedResource?.chairs
+         chairs: selectedResource?.chairs,
+         width: selectedResource?.width,
+         height: selectedResource?.height
       },
       changeValueCallback: ({ name, value }) => {
          if (!name || !value) return;

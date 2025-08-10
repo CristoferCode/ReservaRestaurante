@@ -64,6 +64,14 @@ export const useReservationWithToast = () => {
    }
 
    const confirmReservationWithToast = (reservation) => {
+      console.log({
+         idUser: reservation.idUser,
+         hour: reservation.hour,
+         idReservation: reservation.id,
+         idRestaurant: reservation.idRestaurant,
+         tablesReservation: reservation.tables,
+         dateStr: reservation.dateStr,
+      });
       AdminTableToasts.confirmReserve(
          confirmReservation({
             idUser: reservation.idUser,
@@ -77,6 +85,14 @@ export const useReservationWithToast = () => {
    };
 
    const releaseReservationWithToast = (reservation) => {
+      console.log({
+         idUser: reservation.idUser,
+         hour: reservation.hour,
+         idReservation: reservation.id,
+         idRestaurant: reservation.idRestaurant,
+         tablesReservation: reservation.tables,
+         dateStr: reservation.dateStr,
+      });
       AdminTableToasts.releaseReserve(
          releasedReservation({
             hour: reservation.hour,
@@ -90,6 +106,7 @@ export const useReservationWithToast = () => {
    };
 
    const blockTempTableWithToast = async ({ table, filter }) => {
+
       AdminTableToasts.blockTempTable(
          blockTempTable({
             idTable: table.id,

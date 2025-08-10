@@ -309,6 +309,7 @@ export const CreateObject = ({
                <NumberInput
                   min={0}
                   max={360}
+                  step={10}
                   axis='x'
                   name={'rotation'}
                   value={rotation}

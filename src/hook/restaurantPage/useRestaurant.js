@@ -1,4 +1,4 @@
-import { createRestaurantThunks, deleteRestaurantThunks, setSelectedRestaurantAction, updateRestaurantThunks } from '@/doman/store/dashboard';
+import { createRestaurantThunks, deleteRestaurantThunks, setSelectedRestaurantAction, updateRestaurantThunks } from '@/doman/store/restaurantPage';
 import { useDispatch } from 'react-redux';
 
 export const useRestaurant = () => {

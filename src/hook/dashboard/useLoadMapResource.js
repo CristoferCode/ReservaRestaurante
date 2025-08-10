@@ -1,14 +1,14 @@
-import { loadTablesAndObjectsThunks, setLastParams } from '@/doman/store/dashboard';
+import { loadTablesAndObjectsThunks, setLastParams } from '@/doman/store/mapPage';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-export const useLoadRestaurantResource = ({
+export const useLoadMapResource = ({
    lastParams,
    restaurant,
    dateStr,
    hour
 }) => {
-   const state = useSelector((state) => state.restaurantResourceReducer)
+   const state = useSelector((state) => state.mapResource)
    const dispatch = useDispatch();
 
    useEffect(() => {

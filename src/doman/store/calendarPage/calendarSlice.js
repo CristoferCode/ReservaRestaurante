@@ -35,6 +35,10 @@ export const calendarSlice = createSlice({
             }
             return r
          });
+
+         if (state.selectedReservation?.id === payload.id) {
+            state.selectedReservation = { ...state.selectedReservation, ...payload, tables: payload?.tables }
+         }
       },
 
       removeReservationCalendar: (state, { payload }) => {

@@ -88,7 +88,6 @@ export const MapEdit = ({
 
          if (occupiedCells.has(cellKey)) return;
 
-         // Buscar un recurso que incluya esta celda
          const resource = resources.find((res) => {
             const resX = res.positionX;
             const resY = res.positionY;
@@ -106,7 +105,6 @@ export const MapEdit = ({
          if (resource) {
             const { width = 1, height = 1, id, type, positionX, positionY } = resource;
 
-            // Marcar todas las celdas que ocupa este recurso
             for (let dx = 0; dx < height; dx++) {
                for (let dy = 0; dy < width; dy++) {
                   occupiedCells.add(`${positionX + dx}-${positionY + dy}`);

@@ -62,7 +62,7 @@ export const DialigCancelReserve = ({
          setIsProcessing(true);
          AdminTableToasts.cancelATablesReservation(
             onCancelATablesReservation({
-               idReservation: table.reservation.idReservation,
+               idReservation: table.reservation.id,
                tables: relatedTables.filter(t => localHighlightedId.includes(t.id)),
                tablesNoSelect: relatedTables.filter(t => !localHighlightedId.includes(t.id)),
             }),

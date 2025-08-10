@@ -1,4 +1,4 @@
-import { getAllRestaurantsThunk, setSelectedRestaurantAction } from '@/doman/store/dashboard';
+import { getAllRestaurantsThunk, setSelectedRestaurantAction } from '@/doman/store/restaurantPage';
 import { Store } from 'lucide-react';
 import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';

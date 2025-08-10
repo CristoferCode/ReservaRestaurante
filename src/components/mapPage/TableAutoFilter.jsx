@@ -1,7 +1,7 @@
 import { cn, DateParser } from '@/ultils';
 import { CalendarButton } from '../UI/calendar';
 
-import { useLoadFilterRestaurant, useStateFilterRestaurant } from '@/hook/dashboard';
+import { useLoadFilterMap, useStateFilterRestaurant } from '@/hook/dashboard';
 import { Card2 } from '../UI/card';
 import {
    Form,
@@ -18,7 +18,7 @@ export const TableAutoFilter = ({
    className,
 }) => {
 
-   useLoadFilterRestaurant();
+   useLoadFilterMap();
 
    const {
       hours,

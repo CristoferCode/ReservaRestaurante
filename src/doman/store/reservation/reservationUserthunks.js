@@ -12,7 +12,7 @@ import {
    reserveSetTablesAction,
    typeLoading,
    typeStatus
-} from './reserveSlice';
+} from './reservationSlice';
 
 export const startGetAvailableHours = (date) => {
    return async (dispatch, getState) => {

@@ -21,12 +21,14 @@ import {
    SelectValue
 } from '../UI/from';
 import toast from 'react-hot-toast';
+import { reasonData } from '@/data';
 
 const schema = {
    initial: {
       email: '',
       phone: '',
       name: '',
+      reason: '',
       restaurant: '',
       diners: 2,
       date: new Date(),
@@ -48,6 +50,10 @@ const schema = {
       diners: [
          (value) => value > 0,
          'El número de comensales debe ser mayor a 0',
+      ],
+      reason: [
+         (value) => !!value,
+         'El motivo es obligatorio',
       ],
       hour: [
          (value) => !!value,
@@ -144,6 +150,7 @@ export const FromReservation = memo(({
          diners,
          name,
          restaurant,
+         reason,
          date,
          hour
       },
@@ -153,7 +160,8 @@ export const FromReservation = memo(({
          dinersValid,
          nameValid,
          restaurantValid,
-         hourValid
+         reasonValid,
+         hourValid,
       },
       onValueChange,
       onSubmitForm,
@@ -166,10 +174,9 @@ export const FromReservation = memo(({
          initial: schema.initial,
          newInitial: {
             ...initialValues,
-            hour: '',
-            restaurant: '',
          },
       }),
+
       changeValueCallback: ({ name, value }) => {
          if (name === 'email') {
             onChangeEmailOrClear({ name, value });
@@ -215,12 +222,22 @@ export const FromReservation = memo(({
             const idRestaurant = getIdRestaurantByName(restaurant);
             if (!idRestaurant) return;
 
-            loadTables({
+            loadHours({
                idRestaurant: idRestaurant,
                dateStr: DateParser.toString(date),
                diners: Number(value),
-               hour: hour,
             });
+            
+            onInitialValues({
+               hour: '',
+            })
+
+            // loadTables({
+            //    idRestaurant: idRestaurant,
+            //    dateStr: DateParser.toString(date),
+            //    diners: Number(value),
+            //    hour: hour,
+            // });
          }
          setSelectedTables([])
       }
@@ -292,15 +309,16 @@ export const FromReservation = memo(({
          resetForm,
          selectedTables,
          formState: {
-            tables: selectedTables,
-            idRestaurant: getIdRestaurantByName(restaurant),
-            dateStr: DateParser.toString(date),
-            hour: data.hour,
+            tables: selectedTables || initialValues?.tables,
+            idRestaurant: getIdRestaurantByName(restaurant) || initialValues?.idRestaurant,
+            dateStr: DateParser.toString(date) || initialValues?.dateStr,
+            hour: data.hour || initialValues?.hour,
+            reason: data.reason || initialValues?.reason,
             idUser: user?.id || initialValues?.idUser,
             name: data.name || user?.name,
             email: data.email || user?.email,
             phone: data.phone || user?.phone,
-            diners: Number(data.diners),
+            diners: Number(data.diners) || initialValues?.diners,
             ...(isEdit && { idReservation: initialValues?.id })
          },
       })
@@ -348,35 +366,55 @@ export const FromReservation = memo(({
             Información del cliente
          </FormLabel>
 
-         <FormItem>
-            <FormLabel htmlFor='email'>
-               Email
-            </FormLabel>
-            <Input
-               id='email'
-               name='email'
-               type='email'
-               value={email}
-               onChange={onValueChange}
-               isError={!!emailValid}
-               variant='crystal'
-               icon={initialValues?.idUser ? null : renderEmailIcon}
-               disabled={!!initialValues?.idUser || isReadOnly}
-               iconPosition='right'
-               activeEventIcon
-            />
+         <FromGroup className={'grid md:grid-cols-2 gap-4'}>
+            <FormItem>
+               <FormLabel htmlFor='email'>
+                  Email
+               </FormLabel>
+               <Input
+                  id='email'
+                  name='email'
+                  type='email'
+                  value={email}
+                  onChange={onValueChange}
+                  isError={!!emailValid}
+                  variant='crystal'
+                  icon={initialValues?.idUser ? null : renderEmailIcon}
+                  disabled={!!initialValues?.idUser || isReadOnly}
+                  iconPosition='right'
+                  activeEventIcon
+               />
 
-            {
-               !initialValues?.idUser && (
-                  user
-                     ? <UserCard
-                        className={'text-accent-foreground'}
-                        user={user}
-                     />
-                     : <span className='text-sm text-muted-foreground'>Buscar por email</span>
-               )
-            }
-         </FormItem>
+               {
+                  !initialValues?.idUser && (
+                     user
+                        ? <UserCard
+                           className={'text-accent-foreground'}
+                           user={user}
+                        />
+                        : <span className='text-sm text-muted-foreground'>Buscar por email</span>
+                  )
+               }
+            </FormItem>
+            <FormItem>
+               <FormLabel htmlFor='phone'>
+                  Teléfono
+               </FormLabel>
+               <Input
+                  id='phone'
+                  name='phone'
+                  type='text'
+                  value={phone || user?.phone || ''}
+                  onChange={onValueChange}
+                  isError={!!phoneValid}
+                  variant='crystal'
+                  disabled={(isBlockedFields && initialValues?.user) || isReadOnly}
+               />
+               {
+                  !initialValues?.idUser && <span className='text-sm text-muted-foreground'>Es necesario ingresar el teléfono</span>
+               }
+            </FormItem>
+         </FromGroup>
 
          <FromGroup className={'grid md:grid-cols-2 gap-4'}>
             <FormItem>
@@ -395,23 +433,34 @@ export const FromReservation = memo(({
                />
 
             </FormItem>
-
             <FormItem>
-               <FormLabel htmlFor='phone'>
-                  Teléfono
+               <FormLabel htmlFor='reason'>
+                  Motivo
                </FormLabel>
-               <Input
-                  id='phone'
-                  name='phone'
-                  type='text'
-                  value={phone || user?.phone || ''}
-                  onChange={onValueChange}
-                  isError={!!phoneValid}
-                  variant='crystal'
-                  disabled={(isBlockedFields && initialValues?.user) || isReadOnly}
-               />
+               <Select
+                  name='reason'
+                  value={reason || undefined}
+                  onValueChange={onValueChange}
+               >
+                  <SelectTrigger
+                     isError={!!reasonValid}
+                     variant='crystal'
+                     className='w-full'
+                  >
+                     <SelectValue placeholder='Seleccione un motivo' />
+                  </SelectTrigger>
+                  <SelectContent>
+                     {reasonData.map((item) => (
+                        <SelectItem
+                           key={item.id}
+                           value={item.name}
+                        >
+                           {item.name}
+                        </SelectItem>
+                     ))}
+                  </SelectContent>
+               </Select>
             </FormItem>
-
          </FromGroup>
 
          <FormLabel
@@ -583,7 +632,7 @@ export const FromReservation = memo(({
                            type={item.type || 'button'}
                            variant={item.variant || 'default'}
                            onClick={item.type !== 'submit' ? item.onClick : null}
-                           disabled={item.disabled || item.disabledBySelected || selectedTables.length === 0 || isReadOnly}
+                           disabled={item.disabled || (initialValues?.tables && item.disabledBySelected && selectedTables.length === 0) || (!initialValues?.tables && selectedTables.length === 0) || isReadOnly}
                         >
                            {item.label}
                         </Button>
@@ -598,3 +647,4 @@ export const FromReservation = memo(({
 })
 
 FromReservation.displayName = 'FormReservation'
+

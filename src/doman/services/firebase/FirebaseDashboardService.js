@@ -13,7 +13,7 @@ import {
    where,
 } from 'firebase/firestore/lite';
 
-import { DateDiff, DateFormat, DateParser, generateCode, typeResource, typeStatusTable, validDateReservation, validHourReservation } from '@/ultils';
+import { DateFormat, DateParser, generateCode, typeResource, typeStatusTable, ValidationReservation } from '@/ultils';
 
 import { endOfMonth, startOfMonth, subMonths } from 'date-fns';
 import { FirebaseDB } from './config';
@@ -275,14 +275,17 @@ export class FirebaseDashboardService {
             const info = {
                status: data?.status ?? null,
                reservation: {
-                  code: data?.code ?? null,
+                  ...data,
                   idReservation: doc.id,
                   id: doc.id ?? null,
+                  code: data?.code ?? null,
                   timestamp: data?.timestamp ?? null,
                   relatedTables: data?.tables ?? [],
                   hour: data?.hour ?? null,
                   dateStr: data?.dateStr ?? null,
                   idRestaurant: data?.idRestaurant ?? null,
+                  createdAt: data?.createdAt?.toDate().toISOString() ?? null,
+                  updatedAt: data?.updatedAt?.toDate().toISOString() ?? null
                },
                user: {
                   name: data.name ?? null,
@@ -436,12 +439,17 @@ export class FirebaseDashboardService {
             throw new Error('No se proporciono el id de la reserva');
          }
 
-         const reservation = await getDoc(doc(FirebaseDB, 'reservations', idReservation));
+         let reservation = await getDoc(doc(FirebaseDB, 'reservations', idReservation));
+
+         if (!reservation.exists()) {
+            throw new Error('No se encontro la reserva');
+         }
 
          const reservationRef = doc(FirebaseDB, 'reservations', idReservation);
 
-         const data = reservation.data();
-         const updateTables = data.tables?.filter(({ id }) => {
+         const reservationData = reservation.data();
+
+         const updateTables = reservationData.tables?.filter(({ id }) => {
             return !tables?.find((table) => table.id === id)
          });
 
@@ -451,7 +459,14 @@ export class FirebaseDashboardService {
          });
 
          return {
-            ok: true
+            ok: true,
+            reservation: {
+               id: idReservation,
+               ...reservationData,
+               tables: updateTables,
+               updatedAt: reservationData?.updatedAt?.toDate()?.toISOString(),
+               createdAt: reservationData?.createdAt?.toDate()?.toISOString(),
+            }
          }
          // Cannot read properties of undefined (reading 'filter')
 
@@ -521,30 +536,16 @@ export class FirebaseDashboardService {
       comment,
    }) {
       try {
-         if (!validDateReservation(dateStr)) {
-            if (!validHourReservation(hour)) {
-               throw new Error('No se pueden reservar horas pasadas');
-            }
-            throw new Error('No se pueden reservar fechas pasadas');
-         }
 
-         if (DateDiff.isSameDate(dateStr)) {
-            if (!validHourReservation(hour)) {
-               throw new Error('No se pueden reservar horas pasadas');
-            }
-         }
-
-         if (!idRestaurant) {
-            throw new Error('Seleccione un restaurante');
-         }
-
-         if (!Array.isArray(tables) || tables.length <= 0) {
-            throw new Error('No se proporciono las mesas');
-         }
-
-         if (typeof diners !== 'number' || diners <= 0) {
-            throw new Error('El número de comensales no es válido');
-         }
+         ValidationReservation({
+            dateStr,
+            hour,
+            tables,
+            diners,
+            idUser,
+            idRestaurant,
+            idReservation: null,
+         })
 
          const reservations = await getDocs(query(
             collection(FirebaseDB, 'reservations'),
@@ -668,29 +669,17 @@ export class FirebaseDashboardService {
       comment,
    }) {
       try {
-         if (!idReservation) {
-            throw new Error('No se proporciono el id de la reserva');
-         }
+         ValidationReservation({
+            dateStr,
+            hour,
+            tables,
+            diners,
+            idUser,
+            idRestaurant,
+            idReservation,
+         })
 
          const reservationRef = doc(FirebaseDB, 'reservations', idReservation);
-
-         const data = {
-            id: idReservation,
-            idUser: idUser ?? null,
-            idRestaurant,
-            diners: diners ?? 1,
-            reason: reason ?? 'Sin motivo',
-            hour,
-            comment: comment ?? 'Reserva por el panel de administrador',
-            tables: tables.map(t => ({ id: t.id, name: t.name })),
-            dateStr: dateStr,
-            status: typeStatusTable.PENDING,
-            name: name || null,
-            email: email || null,
-            phone: phone || null,
-            updatedAt: serverTimestamp()
-         }
-
 
          const reservation = await getDoc(reservationRef);
 
@@ -702,6 +691,26 @@ export class FirebaseDashboardService {
             throw new Error('Solo es posible actualizar reservas pendientes');
          }
 
+         const reservationData = reservation.data();
+
+         const data = {
+            id: idReservation,
+            idUser: idUser || reservationData.idUser,
+            idRestaurant: idRestaurant || reservationData.idRestaurant,
+            diners: diners || reservationData.diners,
+            reason: reason || reservationData.reason,
+            hour: hour || reservationData.hour,
+            comment: comment || reservationData.comment,
+            tables: tables || reservationData.tables,
+            dateStr: dateStr || reservationData.dateStr,
+            status: typeStatusTable.PENDING,
+            name: name || reservationData.name,
+            email: email || reservationData.email,
+            phone: phone || reservationData.phone,
+            createdAt: reservationData.createdAt,
+            updatedAt: serverTimestamp()
+         }
+
          await updateDoc(reservationRef, data);
 
          return {
@@ -709,6 +718,7 @@ export class FirebaseDashboardService {
             reservationData: {
                id: reservation.id,
                ...reservation.data(),
+               ...data,
                createdAt: reservation.data().createdAt.toDate().toISOString().split('T')[0],
                updatedAt: new Date().toISOString().split('T')[0]
             }
@@ -1084,7 +1094,13 @@ export class FirebaseDashboardService {
          });
 
          return {
-            ok: true
+            ok: true,
+            reservation: {
+               id: reservation.id,
+               ...reservation.data(),
+               createdAt: reservation.data().createdAt.toDate().toISOString(),
+               updatedAt: reservation?.data()?.updatedAt?.toDate() ? reservation.data().updatedAt.toDate().toISOString() : null
+            },
          }
 
       } catch (error) {
@@ -1114,8 +1130,15 @@ export class FirebaseDashboardService {
             updatedAt: serverTimestamp()
          });
 
+
          return {
-            ok: true
+            ok: true,
+            reservation: {
+               id: reservation.id,
+               ...reservation.data(),
+               createdAt: reservation.data().createdAt.toDate().toISOString(),
+               updatedAt: reservation?.data()?.updatedAt?.toDate() ? reservation.data().updatedAt.toDate().toISOString() : null
+            }
          }
 
       } catch (error) {

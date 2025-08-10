@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-export const restaurantUiSlice = createSlice({
-   name: 'restaurantUi',
+export const mapUiSlice = createSlice({
+   name: 'mapUi',
 
    initialState: {
       isEdit: false,
@@ -49,4 +49,4 @@ export const {
    updateSelectedResourceAction,
    setTempRestaurantAction,
    changeValueTempRestaurantAction
-} = restaurantUiSlice.actions;
+} = mapUiSlice.actions;

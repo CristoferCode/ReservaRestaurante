@@ -1,4 +1,4 @@
-import { loadByStateReservationsThunks, setSelectedReservationAction } from '@/doman/store/dashboard';
+import { loadByStateReservationsThunks, setSelectedReservationAction } from '@/doman/store/calendarPage';
 import { DateFormat, typeStatusTable } from '@/ultils';
 import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';

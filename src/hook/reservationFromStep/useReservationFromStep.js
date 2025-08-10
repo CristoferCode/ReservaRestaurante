@@ -16,7 +16,7 @@ import {
    startGetTables,
    startReserveTable,
    typeStatus,
-} from '@/doman/store/reserve';
+} from '@/doman/store/reservation';
 import { DateParser, typeStatusTable } from '@/ultils';
 
 export const useReservationFromStep = () => {

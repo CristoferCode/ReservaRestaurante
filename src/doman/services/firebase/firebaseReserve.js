@@ -10,7 +10,7 @@ import {
    where,
 } from 'firebase/firestore/lite';
 
-import { DateDiff, DateParser, typeStatusTable, validDateReservation, validHourReservation } from '@/ultils';
+import { DateParser, typeStatusTable, ValidationReservation, validDateReservation } from '@/ultils';
 
 import { FirebaseDB } from './config';
 
@@ -282,30 +282,15 @@ export class FirebaseReserveService {
          const auth = getAuth();
          const user = auth.currentUser;
 
-         if (!validDateReservation(dateStr)) {
-            if (!validHourReservation(hour)) {
-               throw new Error('No se pueden reservar horas pasadas');
-            }
-            throw new Error('No se pueden reservar fechas pasadas');
-         }
-
-         if (DateDiff.isSameDate(dateStr)) {
-            if (!validHourReservation(hour)) {
-               throw new Error('No se pueden reservar horas pasadas');
-            }
-         }
-
-         if (!idRestaurant) {
-            throw new Error('Seleccione un restaurante');
-         }
-
-         if (!Array.isArray(tables) || tables.length <= 0) {
-            throw new Error('No se proporciono las mesas');
-         }
-
-         if (typeof diners !== 'number' || diners <= 0) {
-            throw new Error('El número de comensales no es válido');
-         }
+         ValidationReservation({
+            dateStr,
+            hour,
+            tables,
+            diners,
+            idRestaurant,
+            idUser: user.uid,
+            idReservation: null,
+         })
 
          const [userSnap, restaurant] = await Promise.all([
             getDoc(doc(FirebaseDB, 'users', user.uid)),

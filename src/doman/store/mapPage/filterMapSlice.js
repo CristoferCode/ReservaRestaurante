@@ -5,8 +5,8 @@ import { createSlice } from '@reduxjs/toolkit';
  * Datos del filtro
  */
 
-export const stateFilterRestaurantSlice = createSlice({
-   name: 'stateFilterRestaurant',
+export const filterMapSlice = createSlice({
+   name: 'filterMap',
    initialState: {
       messageError: null,
 
@@ -90,4 +90,4 @@ export const {
    setHoursAction,
    setChangeFilterAction,
    setLastParams
-} = stateFilterRestaurantSlice.actions;
+} = filterMapSlice.actions;

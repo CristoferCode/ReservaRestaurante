@@ -1,8 +1,8 @@
 import { dasboardServiceProvider, userSettingProvider } from '@/doman/services';
 import { typeStatusTable } from '@/ultils';
-import { addReservationCalendar, changeStatusReservationCalendar, removeReservationCalendar, updateReservationCalendar } from './calendarSlice';
-import { changeStatusTableAction, clearTablesRelationAction, messageErrorAction } from './restaurantResourceSlice';
-import { addReservationUserDetail, changeStatusReservationUserDetail, updateReservationUserDetail, updateUserDetailAction } from './usersSlice';
+import { addReservationCalendar, changeStatusReservationCalendar, removeReservationCalendar, updateReservationCalendar } from '../calendarPage/calendarSlice';
+import { changeStatusTableAction, clearTablesRelationAction, messageErrorAction } from '../mapPage/mapResourceSlice';
+import { addReservationUserDetail, changeStatusReservationUserDetail, updateReservationUserDetail, updateUserDetailAction } from '../userDetailsPage/usersSlice';
 
 
 const ifChangeStatusTable = ({
@@ -26,7 +26,7 @@ const ifChangeStatusTable = ({
  */
 export const cancelFullReservationThunks = (data) => {
    return async (dispatch, getState) => {
-      const filter = getState().stateFilterRestaurantReducer.filter;
+      const filter = getState().filterMapReducer.filter;
 
       if (data.isNoShow) {
          const { ok, errorMessage } = await dasboardServiceProvider.registerClientnoShow(data);
@@ -87,15 +87,21 @@ export const cancelATablesReservationThunks = (data) => {
          idTables: data.tables.map((t) => t.id)
       }));
 
-      dispatch(changeStatusTableAction({
-         idTables: data.tables.map((t) => t.id),
-         status: typeStatusTable.AVAILABLE
-      }));
+      // dispatch(changeStatusTableAction({
+      //    idTables: res.reservation.tables.map((t) => t.id),
+      //    status: typeStatusTable.AVAILABLE
+      // }));
+
+      dispatch(updateReservationCalendar(
+         res.reservation
+      ))
+
+      dispatch(updateReservationUserDetail({
+         reservation: res.reservation,
+         idUser: res.reservation.idUser
+      }))
    }
 }
-// Cannot read properties of undefined (reading 'map')
-// Cannot read properties of undefined (reading 'filter')
-
 
 /**
  * @param {{ idReservation: string, table: object,tablesReservation: [], hour, dateStr, idRestaurant: string, idUser: string }} data 
@@ -103,7 +109,7 @@ export const cancelATablesReservationThunks = (data) => {
  */
 export const confirmReservationThunks = (data) => {
    return async (dispatch, getState) => {
-      const filter = getState().stateFilterRestaurantReducer.filter;
+      const filter = getState().filterMapReducer.filter;
 
       const res = await dasboardServiceProvider.confirmReservation(data);
 
@@ -117,7 +123,7 @@ export const confirmReservationThunks = (data) => {
          filter,
          callback: () => {
             dispatch(changeStatusTableAction({
-               idTables: data.tablesReservation.map((t) => t.id),
+               idTables: res.reservation.tables?.map((t) => t.id),
                status: typeStatusTable.CONFIRMED
             }));
          }
@@ -131,7 +137,7 @@ export const confirmReservationThunks = (data) => {
       dispatch(changeStatusReservationUserDetail({
          id: data.idReservation,
          status: typeStatusTable.CONFIRMED,
-         idUser: data.idUser
+         idUser: res.reservation.idUser
       }))
    }
 }
@@ -143,7 +149,7 @@ export const confirmReservationThunks = (data) => {
  */
 export const releasedReservationThunks = (data) => {
    return async (dispatch, getState) => {
-      const filter = getState().stateFilterRestaurantReducer.filter;
+      const filter = getState().filterMapReducer.filter;
 
       const res = await dasboardServiceProvider.releaseReservation(data);
 
@@ -157,7 +163,7 @@ export const releasedReservationThunks = (data) => {
          filter,
          callback: () => {
             dispatch(changeStatusTableAction({
-               idTables: data.tablesReservation?.map((t) => t.id),
+               idTables: res.reservation.tables?.map((t) => t.id),
                status: typeStatusTable.AVAILABLE
             }));
          }
@@ -171,7 +177,7 @@ export const releasedReservationThunks = (data) => {
       dispatch(changeStatusReservationUserDetail({
          id: data.idReservation,
          status: typeStatusTable.RELEASED,
-         idUser: data.idUser
+         idUser: res.reservation.idUser
       }))
    }
 }
@@ -182,7 +188,7 @@ export const releasedReservationThunks = (data) => {
  */
 export const reserveTableThunks = (data) => {
    return async (dispatch, getState) => {
-      const filter = getState().stateFilterRestaurantReducer.filter;
+      const filter = getState().filterMapReducer.filter;
 
       const res = await dasboardServiceProvider.reserveTable({
          ...data,
@@ -237,9 +243,18 @@ export const updateReservationThunks = (data) => {
          throw new Error('No se proporciono el id de la reserva');
       }
 
-      const filter = getState().stateFilterRestaurantReducer.filter;
+      const filter = getState().filterMapReducer.filter;
 
-      const res = await dasboardServiceProvider.updateReservation(data);
+      const res = await dasboardServiceProvider.updateReservation({
+         ...data,
+         tables: data?.tables.map(t => ({ id: t.id, name: t.name, chairs: t.chairs }))
+      });
+
+      const updatePhone = await userSettingProvider.updatePhone({
+         phone: data.phone,
+         idUser: data.idUser
+      });
+
       if (!res.ok) {
          dispatch(messageErrorAction(res.errorMessage));
          throw res.errorMessage
@@ -257,7 +272,7 @@ export const updateReservationThunks = (data) => {
             dispatch(changeStatusTableAction({
                status: typeStatusTable.PENDING,
                reservation: res.reservationData,
-               idTables: data.tables.map((t) => t.id)
+               idTables: res.reservationData.tables.map((t) => t.id)
             }));
          }
       })
@@ -271,7 +286,11 @@ export const updateReservationThunks = (data) => {
          idUser: data.idUser
       }))
 
-      return res
+      if (updatePhone.user) {
+         dispatch(updateUserDetailAction(updatePhone.user))
+      }
+
+      return res.reservationData
    }
 }
 

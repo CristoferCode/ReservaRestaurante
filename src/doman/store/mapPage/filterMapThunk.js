@@ -3,7 +3,7 @@ import {
    messageErrorActionFilter,
    setHoursAction,
    setRestaurantsAction
-} from './stateFilterRestaurantSlice';
+} from './filterMapSlice';
 
 export const loadRestaurantsThunks = () => {
    return async (dispatch) => {

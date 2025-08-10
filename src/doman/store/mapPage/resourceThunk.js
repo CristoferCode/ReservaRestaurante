@@ -4,7 +4,7 @@ import {
    loaddingAction,
    messageErrorAction,
    setTablesAndObjectsAction
-} from './restaurantResourceSlice';
+} from './mapResourceSlice';
 
 /**
  * @param {{ idRestaurant: string, dateStr: string, hour: string }} data 

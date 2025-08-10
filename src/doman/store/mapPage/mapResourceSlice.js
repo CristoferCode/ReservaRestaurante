@@ -2,8 +2,8 @@
 import { typeStatusTable } from '@/ultils';
 import { createSlice } from '@reduxjs/toolkit';
 
-export const restaurantResourceSlice = createSlice({
-   name: 'restaurantResource',
+export const mapResourceSlice = createSlice({
+   name: 'map',
    initialState: {
       messageError: null,
 
@@ -101,6 +101,20 @@ export const restaurantResourceSlice = createSlice({
       },
 
       clearTablesRelationAction: (state, { payload: { idTablesNoSelect = [], idTables = [] } }) => {
+
+         state.tables = state.tables.map((table) => {
+            if (idTables.includes(table.id)) {
+               return {
+                  ...table,
+                  hasReservar: false,
+                  status: typeStatusTable.AVAILABLE,
+                  user: null,
+                  reservation: null
+               };
+            }
+            return table;
+         });
+
          state.tables = state.tables.map((t) => {
             if (idTablesNoSelect.includes(t.id)) {
                return {
@@ -156,8 +170,9 @@ export const restaurantResourceSlice = createSlice({
                   return hasReservation && isRelated && isNotSelected;
                });
 
-               if (tablesToUnlink.length > 0) {
+            if (tablesToUnlink.length > 0) {
                const tablesToUnlinkSet = new Set(tablesToUnlink.map((t) => t.id));
+               // console.log(tablesToUnlinkSet);
                state.tables = state.tables.map((table) => {
                   if (tablesToUnlinkSet.has(table.id)) {
                      return {
@@ -183,11 +198,12 @@ export const restaurantResourceSlice = createSlice({
                         email: reservation.email,
                         idUser: reservation.idUser
                      },
-                     createdAt: reservation.createdAt,
                      reservation: {
+                        ...table.reservation,
                         ...reservation,
                         relatedTables: reservation.tables
                      },
+                     createdAt: reservation.createdAt,
                   };
                }
                return table;
@@ -227,4 +243,4 @@ export const {
    setObjectAction,
    setTableAction,
    updateTableAction,
-} = restaurantResourceSlice.actions
+} = mapResourceSlice.actions

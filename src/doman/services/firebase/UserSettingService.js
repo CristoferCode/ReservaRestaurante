@@ -206,6 +206,10 @@ export class UserSettingService {
             throw new Error('No es posible actualizar la reserva en esa hora pasada');
          }
 
+         if (!tables.length) {
+            throw new Error('No se proporciono las mesas');
+         }
+
          const user = await getDoc(doc(FirebaseDB, 'users', idUser));
 
          if (!user.exists()) {
@@ -231,7 +235,7 @@ export class UserSettingService {
             diners: diners ?? 1,
             reason: reason ?? 'Sin motivo',
             comment: comment ?? 'Reserva por el panel de administrador',
-            tables: tables.map(t => ({ id: t.id, name: t.name })),
+            tables: tables,
             dateStr: dateStr,
             email: email ?? user.data().email,
             phone: phone ?? user.data().phone,

@@ -78,13 +78,24 @@ export const HistorialReservationItem = ({
                   </div>
 
                   <div className='space-x-1 md:col-span-3'>
-                     <span className='font-medium'>Mesas:</span>
+                     <span className='font-medium'>
+                        Mesas:
+                     </span>
                      {reservation.tables.map((table, index) => (
                         <span key={table.id}>
                            {table.name} (sillas: {table.chairs})
                            {index < reservation.tables.length - 1 && ', '}
                         </span>
                      ))}
+                  </div>
+
+                  <div className='space-x-1 md:col-span-3'>
+                     <span className='font-medium'>
+                        Motivo:
+                     </span>
+                     <span>
+                        {reservation.reason}
+                     </span>
                   </div>
                </div>
 

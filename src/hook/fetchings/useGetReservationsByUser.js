@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { serviceProvider } from '@/doman/services';
 
@@ -78,9 +78,13 @@ export const useGetReservationsByUser = () => {
       errorMessage: null,
    }))
 
+   const reservations = useMemo(() => {
+      return Array.isArray(state.reservations) ? state.reservations?.sort((a, b) => b.updatedAt - a.updatedAt) : [];
+   }, [state.reservations]);
+
    return {
       // Valores
-      reservations: state.reservations,
+      reservations: reservations,
       isLoading: state.isLoading,
       errorMessage: state.errorMessage,
 

@@ -142,7 +142,7 @@ export const UserDetailModal = ({
                   <UserDetailInfo selectUser={selectUser} />
                )}
             </div>
-            
+
             <UserDetailMetrics selectUser={selectUser} />
 
             <UserDetailTabs
@@ -157,7 +157,7 @@ export const UserDetailModal = ({
                handleReleasedReservation={releaseReservationWithToast}
             />
          </Card2>
-         
+
          {isEditReservation &&
             <EditReservationModal
                className={'w-xl'}

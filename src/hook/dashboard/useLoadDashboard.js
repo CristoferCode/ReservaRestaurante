@@ -1,4 +1,4 @@
-import { dashboardDataThunk } from '@/doman/store/dashboard';
+import { dashboardDataThunk } from '@/doman/store/dashboardPage';
 import { calculateRate } from '@/ultils';
 import { CalendarClock, CalendarDays, CheckCircle, Clock, Users, XCircle } from 'lucide-react';
 import { useEffect, useMemo } from 'react';

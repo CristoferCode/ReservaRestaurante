@@ -1,4 +1,4 @@
-import { cn } from '@/ultils';
+import { cn, DateFormat } from '@/ultils';
 import { Card2 } from '../UI/card';
 import { Badge, CardFooter, CardHeader, CardTitle, Modal } from '../UI/common';
 import { CalendarDays, Clock, Mail, MessageSquare, Phone, Store, Table, Tag, Users, Utensils } from 'lucide-react';
@@ -60,7 +60,7 @@ export const EditStateReserveModal = ({
                      Fecha:
                   </span>
                   <span className='text-accent-foreground/80'>
-                     {reservation.dateStr}
+                     {DateFormat.weekYearMonthDay(reservation.dateStr)}
                   </span>
                </li>
                <li className='flex items-center gap-2'>
@@ -98,11 +98,11 @@ export const EditStateReserveModal = ({
                   <span className='font-medium'>
                      Mesas:
                   </span>
-                  <div className='flex flex-col text-accent-foreground/80'>
+                  <div className='flex gap-1 flex-wrap text-accent-foreground/80'>
                      {reservation.tables.map((table, index) => (
                         <span key={table.id}>
                            {table.name} ({table.chairs} sillas)
-                           {index < reservation.tables.length - 1 && ', '}
+                           {index < reservation.tables.length - 1 && ', '} 
                         </span>
                      ))}
                   </div>
