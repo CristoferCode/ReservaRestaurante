@@ -28,6 +28,7 @@ export const CalendarButton = ({
       <Popover className={className}>
          <PopoverTrigger asChild>
             <Button
+               role='button'
                className={`w-48 p-3 justify-between font-normal ${btnClassName}`}
                variant={variant || 'crystal'}
                type='button'
@@ -46,6 +47,7 @@ export const CalendarButton = ({
          <PopoverContent>
             <Calendar
                mode='single'
+               aria-label='Calendar Date'
                selected={defaultValue || date}
                captionLayout='dropdown'
                disabled={configDate}

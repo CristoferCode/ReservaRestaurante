@@ -12,10 +12,13 @@ const __dirname = path.dirname(__filename);
 export const viteConfig = defineConfig({
   plugins: [react(), tailwindcss()],
   test: {
+    // globals: true,
+    // environment: 'jsdom',
+    // setupFiles: './test/setupTest.js',
+    // include: ['./test/**/*.test.jsx'],
     globals: true,
     environment: 'jsdom',
-    setupFiles: './test/setupTest.js',
-    include: ['./test/**/*.test.jsx'],
+    setupFiles: './test/setupTest.js'
   },
   resolve: {
     alias: { '@': path.resolve(__dirname, './src') }

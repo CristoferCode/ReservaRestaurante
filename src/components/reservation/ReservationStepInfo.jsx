@@ -19,7 +19,6 @@ import {
 import { reasonData } from '@/data';
 
 
-
 const schema = {
    valid: {
       restaurant: [
@@ -94,6 +93,7 @@ export const ReservationStepInfo = ({
    return (
       <Suspense>
          <Form
+            role='form'
             onSubmit={onSubmit}
             className={cn(
                'md:w-[50%] h-full mx-auto flex flex-col justify-center gap-8',
@@ -110,8 +110,11 @@ export const ReservationStepInfo = ({
                      isError={!!restaurantValid}
                      variant='crystal'
                      className='w-full'
-                  >
-                     <SelectValue placeholder='Seleccione una localidad' />
+                     role='button'
+                     >
+                     <SelectValue
+                        placeholder='Seleccione una localidad'
+                     />
                   </SelectTrigger>
                   <SelectContent>
                      {restaurants.map((item) => (
@@ -136,6 +139,7 @@ export const ReservationStepInfo = ({
                      isError={!!reasonValid}
                      variant='crystal'
                      className='w-full'
+                     role='button'
                   >
                      <SelectValue placeholder='Seleccione un motivo' />
                   </SelectTrigger>
@@ -158,11 +162,13 @@ export const ReservationStepInfo = ({
                   min={1}
                   type='number'
                   name='diners'
+                  id='diners'
                   variant='crystal'
                   value={diners ?? ''}
                   onChange={onValueChange}
                   isError={!!dinersValid}
                   placeholder='Personas'
+                  aria-label='Personas'
                />
             </FormItem>
 

@@ -41,7 +41,9 @@ export const DayPicker = ({
    };
 
    return (
-      <div className={`relative w-full flex flex-col gap-2 ${className}`}>
+      <div
+         className={`relative w-full flex flex-col gap-2 ${className} `}
+      >
          <div
             ref={scrollRef}
             className={cn(
@@ -72,9 +74,12 @@ export const DayPicker = ({
                         size='lg'
                         className='text-lg px-3'
                         onClick={() => onChange({ name, value: fullDate })}
+                        aria-label={`Select Day ${fullDate.toDateString()}`}
+                        role='button'
                      >
                         {day}
                      </Button>
+
                      <span className='font-bold block capitalize text-sm text-muted-foreground'>
                         {monthName}
                      </span>
